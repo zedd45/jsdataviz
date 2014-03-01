@@ -19,7 +19,7 @@ The treemap-squared library itself depends on the [Raphaël](http://raphaeljs.co
   </head>
   <body>
     <div id="treemap"></div>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="js/treemap-squared-0.5.min.js"></script>
   </body>
 </html>

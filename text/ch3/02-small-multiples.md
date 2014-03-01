@@ -33,14 +33,17 @@ The sparklines library makes is easy to embed the data directly inside the HTML 
             <td class='sparkline'>37.1,36.92,39.93,39.81,40.43,39.76,39.73,38.55,36.89,...</td>
             <td>-7%</td>
         </tr>
-		... 
+        ... 
     </tbody>
 </table>
 ```
 
 The table has three important characteristics relevant to our visualization.
 
-* Each stock is a single table row (`<tr>`).* Stocks from Barclay’s Technology list have the class attribute `'barclays'` added to that `<tr>` element.* The top Corporate Responsibility stock has no special attributes or characteristics (yet).
+* Each stock is a single table row (`<tr>`).
+* Stocks from Barclay’s Technology list have the class attribute `'barclays'` added to that `<tr>` element.
+* The top Corporate Responsibility stock has no special attributes or characteristics (yet).
+
 #### Step 2: Draw the Charts
 
 Just as in this chapter’s first example, creating the sparklines using default options is amazingly simple. It only takes a single line of Javascript. We use jQuery to select all the elements which contain sparkline data, and we call the `sparkline()` function to generate the charts. Notice that we only have to make one call to `sparkline()`, even though each chart has unique data. That’s a major benefit of placing the data within the HTML itself.
@@ -171,7 +174,7 @@ The resulting charts all have identical styles, but we’ll fix that in the next
             <td class='sparkline'>83.01,82.78,85.33,83.71,82.82,82.17,83.96,85.65,84.66,82.67,84.76,83.89,85.05,83.17,81.34,83.65,84.41,82.93,82.05,80.44,81.04,76.94,79.82,82.17,81.07,84.49,83.73,84.39,84.86,86.34,86.44,87.89,87.85,87.5,86.76,89.36,91.73,91.35,90.88,91.97,90.46,91.58,90.06,89.71,87.21,86.45,89.09,88.14,88.6,88.08,87.23,85.1,86.55</td>
             <td>4%</td>
         </tr>
-	</tbody>
+    </tbody>
 </table>
 
 #### Step 4: Establish a Default Style the Charts
@@ -206,7 +209,7 @@ Here is the result for one row. We'll use this style as the default for all our 
             <td class='sparkline'>418.68,416.11,416.6,443.34,455.63,489.08,497.7,517.81,540.38,540.37,580.42,590.8,594.27,628.1,599.9,567.94,597.69,560.27,561.72,525.71,557.34,556.05,575.21,569.08,576.98,578.86,600.55,599.64,598.98,580.01,610.28,618.87,645.16,660.2,662.22,677.35,688.14,696.91,664.07,649.62,626.85,607.07,601.25,574.18,547.06,527.68,571.5,585.28,533.25,509.79,519.33,509.59,532.17</td>
             <td>27%</td>
         </tr>
-	</tbody>
+    </tbody>
 </table>
 
 #### Step 5: Modify the Default Style for Special Classes
@@ -255,7 +258,10 @@ var sparkline_barclays = $.extend( {}, sparkline_default, {
 
 You can think of the call to `.extend()` as a two-stage process.
 
-1. Since our target is initially empty, the first merge will add all of the properties from `sparkline_default` to the target.2. Our target now has the same properties as `sparkline_default`, but the second merge will modify it by updating the two properties in the last parameter, `lineColor` and `fillColor`.The resulting object will hold the options we want for charts of Barclay’s technology stocks. Here’s we use these objects to create the charts.
+1. Since our target is initially empty, the first merge will add all of the properties from `sparkline_default` to the target.
+2. Our target now has the same properties as `sparkline_default`, but the second merge will modify it by updating the two properties in the last parameter, `lineColor` and `fillColor`.
+
+The resulting object will hold the options we want for charts of Barclay’s technology stocks. Here’s we use these objects to create the charts.
 
 Here's a complete code listing.
 
@@ -300,7 +306,7 @@ As a result, we have an easy way to maintain both default styles and styles for 
             <td class='sparkline'>57.58,58.11,59.54,59.25,60.54,60.41,60.98,57.38,57.59,59.03,59.77,59.68,60.13,59.61,58.72,61.35,57.99,57.67,58.77,61.75,64.6,64.84,67.48,67.01,66.57,68.96,70.58,72.38,71.46,73.71,73.74,73.27,71.59,71.71,72.2,73.41,74.09,74.04,73.39,74.72,75.39,75.2,74.7,72.37,71.91,67.65,69.81,71.62,72.29,68.75,68.65,67.61,68.23</td>
             <td>18%</td>
         </tr>
-	</tbody>
+    </tbody>
 </table>
 
 
@@ -333,13 +339,13 @@ If we use these options correctly, one of our charts will have a distinct color.
 
 <table class="table table-bordered table-condensed" id="multiples-chart4" class="figure">
     <tbody>
-		<tr>
-    		<td>BMY</td>
-    		<td>Bristol Meyers Squibb Co.</td>
-    		<td class='sparkline' data-LineColor='#5ab7aa' data-FillColor='#a2e3d9'>32.86,32.46,31.36,31.01,30.98,30.64,31.81,31.31,31.3,31.61,31.87,31.65,32.41,32.67,31.57,33.21,32.32,32.37,32.12,31.74,32.1,32.33,33.34,33.21,34.3,34.88,33.9,34.64,34.69,35.31,31.97,31.07,30.92,31.9,32.33,32.61,32.55,32.92,33.05,33.28,32.73,33.45,33.26,32.82,31.88,31.37,32.27,32.28,32.21,32.38,32.21,31.56,32.24</td>
-    		<td>(2%)</td>
-		</tr>
-	</tbody>
+        <tr>
+            <td>BMY</td>
+            <td>Bristol Meyers Squibb Co.</td>
+            <td class='sparkline' data-LineColor='#5ab7aa' data-FillColor='#a2e3d9'>32.86,32.46,31.36,31.01,30.98,30.64,31.81,31.31,31.3,31.61,31.87,31.65,32.41,32.67,31.57,33.21,32.32,32.37,32.12,31.74,32.1,32.33,33.34,33.21,34.3,34.88,33.9,34.64,34.69,35.31,31.97,31.07,30.92,31.9,32.33,32.61,32.55,32.92,33.05,33.28,32.73,33.45,33.26,32.82,31.88,31.37,32.27,32.28,32.21,32.38,32.21,31.56,32.24</td>
+            <td>(2%)</td>
+        </tr>
+    </tbody>
 </table>
 
 To pass the appropriate options to `sparkline()` we can take advantage of the work we did in step five. Since we created a special object for default options, that’s the only object we have to change.
@@ -360,21 +366,21 @@ We only need to make the change in one place, and all of our calls to `sparkline
 
 ```language-javascript
 $(function() {
-	var sparkline_default = {
-    	lineColor: "#fca44e",
-    	fillColor: "#fcdea2",
-    	spotColor: false,
-    	minSpotColor: false,
-    	maxSpotColor: false,
-    	enableTagOptions: true,
-    	tagOptionsPrefix: "data-"
-	};
-	var sparkline_barclays = $.extend( {}, sparkline_default, {
-    	lineColor: "#745eb7",
-    	fillColor: "#95a7e8",
-	}); 
-	$('tr:not(.barclays) .sparkline').sparkline('html',sparkline_default);
-	$('tr.barclays .sparkline').sparkline('html',sparkline_barclays);
+    var sparkline_default = {
+        lineColor: "#fca44e",
+        fillColor: "#fcdea2",
+        spotColor: false,
+        minSpotColor: false,
+        maxSpotColor: false,
+        enableTagOptions: true,
+        tagOptionsPrefix: "data-"
+    };
+    var sparkline_barclays = $.extend( {}, sparkline_default, {
+        lineColor: "#745eb7",
+        fillColor: "#95a7e8",
+    }); 
+    $('tr:not(.barclays) .sparkline').sparkline('html',sparkline_default);
+    $('tr.barclays .sparkline').sparkline('html',sparkline_barclays);
 }
 ```
 
@@ -402,12 +408,12 @@ And here is the final result. We have a table that integrates text and charts, a
             <td class='sparkline'>37.1,36.92,39.93,39.81,40.43,39.76,39.73,38.55,36.89,37.68,39.18,38.47,39.49,37.85,37.17,34.95,35.26,33.4,33.53,33.03,34.21,32.09,33.29,32.86,33.24,33.64,32.54,31.16,31.04,35.82,35.58,37,36.23,36.23,37.21,37.85,38.03,36.62,33.89,33.32,32.22,32.4,30.3,30.41,30.64,30.45,31.86,32.39,31.58,32.86,34.5,34.01,34.39</td>
             <td>(7%)</td>
         </tr>
-		<tr>
-    		<td>BMY</td>
-    		<td>Bristol Meyers Squibb Co.</td>
-    		<td class='sparkline' data-LineColor='#5ab7aa' data-FillColor='#a2e3d9'>32.86,32.46,31.36,31.01,30.98,30.64,31.81,31.31,31.3,31.61,31.87,31.65,32.41,32.67,31.57,33.21,32.32,32.37,32.12,31.74,32.1,32.33,33.34,33.21,34.3,34.88,33.9,34.64,34.69,35.31,31.97,31.07,30.92,31.9,32.33,32.61,32.55,32.92,33.05,33.28,32.73,33.45,33.26,32.82,31.88,31.37,32.27,32.28,32.21,32.38,32.21,31.56,32.24</td>
-    		<td>(2%)</td>
-		</tr>
+        <tr>
+            <td>BMY</td>
+            <td>Bristol Meyers Squibb Co.</td>
+            <td class='sparkline' data-LineColor='#5ab7aa' data-FillColor='#a2e3d9'>32.86,32.46,31.36,31.01,30.98,30.64,31.81,31.31,31.3,31.61,31.87,31.65,32.41,32.67,31.57,33.21,32.32,32.37,32.12,31.74,32.1,32.33,33.34,33.21,34.3,34.88,33.9,34.64,34.69,35.31,31.97,31.07,30.92,31.9,32.33,32.61,32.55,32.92,33.05,33.28,32.73,33.45,33.26,32.82,31.88,31.37,32.27,32.28,32.21,32.38,32.21,31.56,32.24</td>
+            <td>(2%)</td>
+        </tr>
         <tr class='fortune'>
             <td>BRKA</td>
             <td>Berkshire Hathaway Inc.</td>
@@ -498,7 +504,7 @@ And here is the final result. We have a table that integrates text and charts, a
             <td class='sparkline'>83.01,82.78,85.33,83.71,82.82,82.17,83.96,85.65,84.66,82.67,84.76,83.89,85.05,83.17,81.34,83.65,84.41,82.93,82.05,80.44,81.04,76.94,79.82,82.17,81.07,84.49,83.73,84.39,84.86,86.34,86.44,87.89,87.85,87.5,86.76,89.36,91.73,91.35,90.88,91.97,90.46,91.58,90.06,89.71,87.21,86.45,89.09,88.14,88.6,88.08,87.23,85.1,86.55</td>
             <td>4%</td>
         </tr>
-	</tbody>
+    </tbody>
 </table>
 
 The third example in chapter 2 uses a full-featured charting package for a similar result. If you don’t need the space efficiency of sparklines, consider that approach as an alternative.
@@ -538,8 +544,8 @@ var sparkline_default = {
 };
 $('#multiples-chart4 .sparkline').sparkline('html',sparkline_default);
 var sparkline_barclays = $.extend( {}, sparkline_default, {
-  	lineColor: "#745eb7",
-   	fillColor: "#95a7e8",
+      lineColor: "#745eb7",
+       fillColor: "#95a7e8",
 }); 
 $('#multiples-chart5 tr:not(.barclays) .sparkline').sparkline('html',sparkline_default);
 $('#multiples-chart5 tr.barclays .sparkline').sparkline('html',sparkline_barclays);

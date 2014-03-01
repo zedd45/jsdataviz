@@ -102,7 +102,7 @@ And with that addition, our chart is now interactive. Users can zoom in to see a
   <body>
     <div id='chart' style="width:600px;height:400px;"></div>
     <button id='unzoom'>Reset Zoom</button>
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js"></script>
   </body>

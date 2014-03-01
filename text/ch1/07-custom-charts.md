@@ -26,26 +26,62 @@ Because flotr2 is an open source project, the source code for all its chart type
 Let’s walk through the original source one section at a time, modifying as necessary. The first block of code defines the chart type for flotr2. It specifies the name of the chart type, and it lists the options it supports. We’ll use our own name (`errorbox`) for the chart type but leave everything else as it is. By convention with other flotr2 charts we’ll use the `show` option to request our chart type. Its default value is `false`.
 
 ```language-javascript
-Flotr.addType('errorbox', {  options: {    show:        false,      // => setting to true will show error boxes    lineWidth:   1,          // => in pixels    fill:        true,       // => true to fill from point to the x axis    fillColor:   '#00A8F0',    fillOpacity: 0.5,        // => opacity of the fill color  },```
+Flotr.addType('errorbox', {
+  options: {
+    show:        false,      // => setting to true will show error boxes
+    lineWidth:   1,          // => in pixels
+    fill:        true,       // => true to fill from point to the x axis
+    fillColor:   '#00A8F0',
+    fillOpacity: 0.5,        // => opacity of the fill color
+  },
+```
 
 The next block of code defines the `draw()` function; every chart type must have this function, as it’s what flotr2 calls to actually create the chart. We don’t have to make any changes to this code for our chart, but we should understand its operation to make sure. Here’s the code from the source, which we’ll use without modification.
 
 ```language-javascript
-draw : function (options) {    var context = options.context;    context.save();    context.lineJoin = 'miter';    context.lineCap = 'butt';    context.lineWidth = options.lineWidth;    this.plot(options);    context.restore();  },```
+draw : function (options) {
+    var context = options.context;
+    context.save();
+    context.lineJoin = 'miter';
+    context.lineCap = 'butt';
+    context.lineWidth = options.lineWidth;
+    this.plot(options);
+    context.restore();
+  },
+```
 
 The parameter passed to `draw` is a Javascript object containing all the options for the chart. Those options include values defined when the chart is created, as well as options that are internal to flotr2. One important option is the drawing context. It is stored in the `options.context` property. For our chart we want to make sure that the drawing context connects lines with a `miter` join and finishes them with a `butt` cap. We also want to set the line width to whatever value the options specify. To do all that the code saves the current context, sets the line properties they way we want them, and then calls the `plot` function. It then restores the context to its original settings and returns.
 
 Most of the real work happens in the `plot()` function. That function accepts as its sole parameter the same `options` object passed to `draw()`. The first section defines a set of local variables to keep track of intermediate calculations.
 
 ```language-javascript
-plot : function (options) {    var      data       = options.data,      context    = options.context,      xScale     = options.xScale,      yScale     = options.yScale,      shadowSize = options.shadowSize,      lineWidth  = options.lineWidth,      color,      datum, x, y, xerr, yerr,      left, right, bottom, top,      i;```
+plot : function (options) {
+    var
+      data       = options.data,
+      context    = options.context,
+      xScale     = options.xScale,
+      yScale     = options.yScale,
+      shadowSize = options.shadowSize,
+      lineWidth  = options.lineWidth,
+      color,
+      datum, x, y, xerr, yerr,
+      left, right, bottom, top,
+      i;
+```
 
 As you can see, most of the local variables are just convenient names for parameters passed as part of the `options` object. Perhaps the most important of those are `data`, data to plot, and `context`, the drawing context. This block also defines several variables that the code uses as it iterates through the data. There are several of these in the original candle chart code that are specific to that chart type, namely `open`, `high`, `low`, and `close`, as well as `bottom2` and `top2`. We don’t need them for our chart, so there’s no need to declare them. Instead, we declare variables relevant to error boxes. Four variables define the data for each point: `x`, `y`, `xerr`, and `yerr`, and another four, `left`, `right`, `bottom`, and `top` define the coordinates of the box we’ll draw.
 
 The next part of the code begins iterating through the data points after a quick check to make sure there’s at least one point to plot.
 
 ```language-javascript
-if (data.length < 1) return;    for (i = 0; i < data.length; i++) {      datum = data[i];      x     = datum[0];      y     = datum[1];      xerr  = datum[2];      yerr  = datum[3];```
+if (data.length < 1) return;
+    for (i = 0; i < data.length; i++) {
+      datum = data[i];
+      x     = datum[0];
+      y     = datum[1];
+      xerr  = datum[2];
+      yerr  = datum[3];
+```
 
 We’re extracting the individual values of each point into convenience variables. This code determines the order of those values in the data point array. The first two values are the x- and y-values; they’re followed by the x- and y-errors. We’ll need to be aware of this order when we construct the data for our chart.
 
@@ -125,7 +161,7 @@ Within our document, we need to create a `<div>` element to contain the chart we
   </head>
   <body>
     <div id='chart' style="width:300px;height:300px;"></div>
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="js/flotr2.min.js"></script>
   </body>
 </html>
@@ -136,7 +172,15 @@ Within our document, we need to create a `<div>` element to contain the chart we
 Here’s the Hubble data from the table above in Javascript notation:
 
 ```language-javascript
-hubble_data = [    { nebulae: "NGC 6822", distance:  0.500, distance_error: 0.010,      velocity:   57, velocity_error: 2, },    { nebulae: "NGC  221", distance:  0.763, distance_error: 0.024,      velocity:  200, velocity_error: 6, },    { nebulae: "NGC  598", distance:  0.835, distance_error: 0.105,      velocity:  179, velocity_error: 3, },...```
+hubble_data = [
+    { nebulae: "NGC 6822", distance:  0.500, distance_error: 0.010,
+      velocity:   57, velocity_error: 2, },
+    { nebulae: "NGC  221", distance:  0.763, distance_error: 0.024,
+      velocity:  200, velocity_error: 6, },
+    { nebulae: "NGC  598", distance:  0.835, distance_error: 0.105,
+      velocity:  179, velocity_error: 3, },
+...
+```
 
 Converting that data into the format our plugin expects requires only a simple function. We start with an empty array and then iterate through the source. For each object in the source we extract the relevant parameters, assemble them into an array, and push that array onto our return result. The order of the individual data values here has to match the order our custom chart code expects.
 
@@ -144,12 +188,12 @@ Converting that data into the format our plugin expects requires only a simple f
 var data = function(source) {
     var result = [];
     for (var i=0; i<source.length; i++) {
-    	result.push([
-    	    source[i].distance,
-    	    source[i].velocity,
-    	    source[i].distance_error,
-    	    source[i].velocity_error, 
-    	]);
+        result.push([
+            source[i].distance,
+            source[i].velocity,
+            source[i].distance_error,
+            source[i].velocity_error, 
+        ]);
     }
     return result;
 }(hubble_data);
@@ -286,8 +330,8 @@ Flotr.draw(document.getElementById("custom-chart1"),djia, {
         fillOpacity: 1, 
     },
     xaxis: {
-    	min:  new Date(2012,11,0).getTime(),
-    	max:  new Date(2012,11,30).getTime(),
+        min:  new Date(2012,11,0).getTime(),
+        max:  new Date(2012,11,30).getTime(),
         mode: 'time',
     },
     yaxis: {
@@ -295,7 +339,7 @@ Flotr.draw(document.getElementById("custom-chart1"),djia, {
         max: 13400
     },
     grid: {
-    	verticalLines: false,
+        verticalLines: false,
     }
 });
 
@@ -388,12 +432,12 @@ var hubble_data = [
 var data = function(source) {
     var result = [];
     for (var i=0; i<source.length; i++) {
-    	result.push([
-    	    source[i].distance,
-    	    source[i].velocity,
-    	    source[i].distance_error,
-    	    source[i].velocity_error, 
-    	]);
+        result.push([
+            source[i].distance,
+            source[i].velocity,
+            source[i].distance_error,
+            source[i].velocity_error, 
+        ]);
     }
     return result;
 }(hubble_data);

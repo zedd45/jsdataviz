@@ -27,7 +27,7 @@ Within our document, we need to create a `<div>` element to contain the charts w
   </head>
   <body>
     <div id='charts'></div>
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js"></script>
   </body>
@@ -50,10 +50,29 @@ $.each(exports, function(idx,region) {
 To iterate through the array of regions we use the jQuery `.each()` function. That function accepts two parameters, an array of objects and a function. It iterates through the array one object at a time, calling the function with the individual object (and its index) as parameters.
 
 #### Step 2: Prepare the Data
-In later examples we’ll see how to get the data directly from the World Bank’s web service, but for this example, let’s keep things simple and assume we have the data ourselves. If we manually download the data from the World Bank’s web site and format it for Javascript, we’ll have code that begins like the following. (For brevity, only excerpts are shown below. The book’s source code includes the full data set.)
-```language-javascript
-var exports = [    { label: "East Asia & Pacific",       data: [[1960,13.2276851887342],[1961,11.7963550115751], …    { label: "Europe & Central Asia",       data: [[1960,19.6961338419723],[1961,19.4263903109578], …    { label: "Latin America & Caribbean",      data: [[1960,11.6801502887395],[1961,11.3068909825283], …    { label: "Middle East & North Africa",      data: [[1968,31.1954177605503],[1969,31.7532529831496], …    { label: "North America",       data: [[1960,5.94754327218195],[1961,5.92748715818847], …    { label: "South Asia",       data: [[1960,5.70858107039607],[1961,5.58067092255634], …    { label: "Sub-Saharan Africa",      data: [[1960,25.5082919987422],[1961,25.3967773829262], …];```
-#### Step 3: Draw the Charts
+
+In later examples we’ll see how to get the data directly from the World Bank’s web service, but for this example, let’s keep things simple and assume we have the data ourselves. If we manually download the data from the World Bank’s web site and format it for Javascript, we’ll have code that begins like the following. (For brevity, only excerpts are shown below. The book’s source code includes the full data set.)
+
+```language-javascript
+var exports = [
+    { label: "East Asia & Pacific", 
+      data: [[1960,13.2276851887342],[1961,11.7963550115751], …
+    { label: "Europe & Central Asia", 
+      data: [[1960,19.6961338419723],[1961,19.4263903109578], …
+    { label: "Latin America & Caribbean",
+      data: [[1960,11.6801502887395],[1961,11.3068909825283], …
+    { label: "Middle East & North Africa",
+      data: [[1968,31.1954177605503],[1969,31.7532529831496], …
+    { label: "North America", 
+      data: [[1960,5.94754327218195],[1961,5.92748715818847], …
+    { label: "South Asia", 
+      data: [[1960,5.70858107039607],[1961,5.58067092255634], …
+    { label: "Sub-Saharan Africa",
+      data: [[1960,25.5082919987422],[1961,25.3967773829262], …
+];
+```
+
+#### Step 3: Draw the Charts
 
 With the `<div>`s for each chart now in place on our page, we can draw the charts using flot’s `plot()` function. That function takes three parameters: the containing element (which we just created), the data, and chart options. To start with, let’s look at the charts without any decoration such as labels, grids, or tick marks. We can use that view to make sure the chart’s presentation of the data is what we want.
 

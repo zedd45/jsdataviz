@@ -1,10 +1,16 @@
 ### Displaying Multidimensional Data with a Radar Chart
 
 If you have data with many dimensions, a radar chart may be the most effective way to visualize it. Radar charts are not as common as other charts, though, and their unfamiliarity makes them a little harder on users. You don't want to increase that burden by using the chart inappropriately.
-Radar charts are most effective when your data has several characteristics
-* You don't have too many data points to show. Half a dozen data points is about the maximum that a radar chart can accommodate.* The data points have multiple dimensions. With two or even three dimensions to your data, you would probably be better off with a more traditional chart type. Radar charts come into play with data of four or more dimensions.* Each data dimension is a scale, e.g. from good to bad. Radar charts don't work well with data dimensions that are merely arbitrary categories (such as political party or nationality). They work best if all the dimensions can at least be ranked, if not assigned a number outright.
-A classic use for radar charts is analyzing the performance of players on a sports team. Consider, for example, the starting lineup of the 2012 National Basketball Association's (NBA) Miami Heat. There are only five data points (the five players). There are multiple dimensions—points, assists, rebounds, blocks, steals, etc., and each of those dimensions has a natural numeric value.
-Here are the players’ 2011-2012 season averages per game, as well as the team totals (which include the contributions of non-starters).
+
+Radar charts are most effective when your data has several characteristics
+
+* You don't have too many data points to show. Half a dozen data points is about the maximum that a radar chart can accommodate.
+* The data points have multiple dimensions. With two or even three dimensions to your data, you would probably be better off with a more traditional chart type. Radar charts come into play with data of four or more dimensions.
+* Each data dimension is a scale, e.g. from good to bad. Radar charts don't work well with data dimensions that are merely arbitrary categories (such as political party or nationality). They work best if all the dimensions can at least be ranked, if not assigned a number outright.
+
+A classic use for radar charts is analyzing the performance of players on a sports team. Consider, for example, the starting lineup of the 2012 National Basketball Association's (NBA) Miami Heat. There are only five data points (the five players). There are multiple dimensions—points, assists, rebounds, blocks, steals, etc., and each of those dimensions has a natural numeric value.
+
+Here are the players’ 2011-2012 season averages per game, as well as the team totals (which include the contributions of non-starters).
 
 | Player         | Points | Rebounds | Assists | Steals | Blocks |
 |----------------|--------|----------|---------|--------|--------|

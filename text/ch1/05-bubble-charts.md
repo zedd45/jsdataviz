@@ -1,8 +1,10 @@
 ### Adding Magnitudes to X/Y Data with a Bubble Chart
 
 Traditional scatter plots, like those described in the last example, show the relationship between two values: the x-axis and the y-axis. Sometimes, however, two values are not adequate for the data we want to visualize. If three variables need visualization, it might be effective to use a scatter plot framework for two of the variables and then vary the size of the points according to the third variable. The resulting chart is a bubble chart.
-Using bubble charts effectively requires some caution, though. Humans cannot accurately judge the relative areas of non-rectangular shapes. So, just as with pie charts and their non-rectangular areas, bubble charts don’t lend themselves to precise comparisons of the bubble size. But if your third variable only conveys the general sense of a quantity rather than an accurate measurement, a bubble chart may be appropriate.
-For this example we’ll use a bubble chart to visualize the path of Hurricane Katrina in 2005. Our x- and y-values will represent position (latitude and longitude), and we’ll ensure our users can interpret those values very accurately. For the third value—the bubble area— we’ll use the storm’s sustained wind speed. Since wind speed is only a general value anyway (as the wind gusts and subsides), a general impression is sufficient.
+
+Using bubble charts effectively requires some caution, though. Humans cannot accurately judge the relative areas of non-rectangular shapes. So, just as with pie charts and their non-rectangular areas, bubble charts don’t lend themselves to precise comparisons of the bubble size. But if your third variable only conveys the general sense of a quantity rather than an accurate measurement, a bubble chart may be appropriate.
+
+For this example we’ll use a bubble chart to visualize the path of Hurricane Katrina in 2005. Our x- and y-values will represent position (latitude and longitude), and we’ll ensure our users can interpret those values very accurately. For the third value—the bubble area— we’ll use the storm’s sustained wind speed. Since wind speed is only a general value anyway (as the wind gusts and subsides), a general impression is sufficient.
 
 Just as in this chapter’s [first example](#id1), we need to include the flotr2 library in our web page and set aside a `<div>` element to contain the chart we’ll construct. 
 

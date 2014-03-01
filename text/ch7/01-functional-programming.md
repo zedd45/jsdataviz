@@ -99,7 +99,7 @@ Notice that this version has no state variables and, except for the edge case to
 
 > Recall that the first two Fibonacci numbers are 0 and 1, and that subsequent numbers are the sum of the two preceding values.
 
-With a functional programming implementation, it’s hard to imagine how a bug (other than a typo) might even be introduced.
+As in this example, functional programming implementations often simply express the desired outcome directly. They can therefore minimize the chance of misinterpretations or errors in an intermediate algorithm.
 
 #### Step 5: Evaluate Performance
 

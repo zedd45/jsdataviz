@@ -56,25 +56,25 @@ ganttData = [{
     name: "Phase 1",
     desc: "Chapter 1",
     values: [{
-    	from:  "/Date("+(new Date(2013,0,3)).getTime()+")/",
-    	to:    "/Date("+(new Date(2013,0,23)).getTime()+")/",
-    	label: "Graphing Data",
+        from:  "/Date("+(new Date(2013,0,3)).getTime()+")/",
+        to:    "/Date("+(new Date(2013,0,23)).getTime()+")/",
+        label: "Graphing Data",
     }],
 },{
     name: " ",
     desc: "Chapter 2",
     values: [{
-    	from:  "/Date("+(new Date(2013,0,23)).getTime()+")/",
-    	to:    "/Date("+(new Date(2013,1,10)).getTime()+")/",
-    	label: "Making Charts Interactive",
+        from:  "/Date("+(new Date(2013,0,23)).getTime()+")/",
+        to:    "/Date("+(new Date(2013,1,10)).getTime()+")/",
+        label: "Making Charts Interactive",
     }],
 },{
    name: " ",
    desc: "Chapter 3",
     values: [{
-    	from:  "/Date("+(new Date(2013,1,10)).getTime()+")/",
-    	to:    "/Date("+(new Date(2013,2,1)).getTime()+")/",
-    	label: "Mixing Charts and Text",
+        from:  "/Date("+(new Date(2013,1,10)).getTime()+")/",
+        to:    "/Date("+(new Date(2013,2,1)).getTime()+")/",
+        label: "Mixing Charts and Text",
     }],
 }];
 ```
@@ -93,7 +93,7 @@ Now that our data is available, one call to the jQuery.Gantt plugin creates the 
 
 ```language-javascript
 $("#gantt").gantt({
-    source: ganttData,	
+    source: ganttData,    
     scale: "weeks",
     maxScale: "months",
     minScale: "days",
@@ -122,7 +122,7 @@ task = {
     extraInfo:   "additional info about the task",
 }
 ```
-	
+    
 We can translate an array of such objects into the format that jQuery.Gantt expects using the jQuery `map()` function.
 
 ```language-javascript
@@ -148,9 +148,9 @@ If you’re not familiar with `map()`, it’s a simple but powerful utility from
 function taskClicked(taskObj) {
     // do something when user clicks on task
 }
-	
+    
 $("#gantt").gantt({
-    source: ganttData,	
+    source: ganttData,    
     scale: "weeks",
     maxScale: "months",
     minScale: "days",
@@ -210,95 +210,95 @@ For a complete example, check out this book’s [source code](https://github.com
 <script>
 contentLoaded.done(function() {
 
-	var ganttData = [{
-	    name: "Phase 1",
-	    desc: "Chapter 1",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,0,3)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,0,23)).getTime()+")/",
-	    	label: "Graphing Data",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 2",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,0,23)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,1,10)).getTime()+")/",
-	    	label: "Making Charts Interactive",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 3",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,1,10)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,2,1)).getTime()+")/",
-	    	label: "Mixing Charts and Text",
-	    }],
-	},{
-	    name: "Title Info",
-	    desc: " ",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,2,4)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,2,4)).getTime()+")/",
-	    	label: "",
-	    }],
-	},{
-	    name: "Phase 2",
-	    desc: "Chapter 4",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,2,4)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,2,18)).getTime()+")/",
-	    	label: "Creating Specialized Charts",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 5",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,2,18)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,2,21)).getTime()+")/",
-	    	label: "Showing Timelines",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 6",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,2,21)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,3,7)).getTime()+")/",
-	    	label: "Visualizing Geographic Data",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 7",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,3,7)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,3,24)).getTime()+")/",
-	    	label: "Managing Data in the Browser",
-	    }],
-	},{
-	    name: " ",
-	    desc: "Chapter 8",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,3,24)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,4,11)).getTime()+")/",
-	    	label: "Building Data-Driven Web Applications",
-	    }],
-	},{
-	    name: "Draft",
-	    desc: "Complete",
-	    values: [{
-	    	from:  "/Date("+(new Date(2013,4,11)).getTime()+")/",
-	    	to:    "/Date("+(new Date(2013,4,11)).getTime()+")/",
-	    	label: "",
-	    }],
-	}];
+    var ganttData = [{
+        name: "Phase 1",
+        desc: "Chapter 1",
+        values: [{
+            from:  "/Date("+(new Date(2013,0,3)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,0,23)).getTime()+")/",
+            label: "Graphing Data",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 2",
+        values: [{
+            from:  "/Date("+(new Date(2013,0,23)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,1,10)).getTime()+")/",
+            label: "Making Charts Interactive",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 3",
+        values: [{
+            from:  "/Date("+(new Date(2013,1,10)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,2,1)).getTime()+")/",
+            label: "Mixing Charts and Text",
+        }],
+    },{
+        name: "Title Info",
+        desc: " ",
+        values: [{
+            from:  "/Date("+(new Date(2013,2,4)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,2,4)).getTime()+")/",
+            label: "",
+        }],
+    },{
+        name: "Phase 2",
+        desc: "Chapter 4",
+        values: [{
+            from:  "/Date("+(new Date(2013,2,4)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,2,18)).getTime()+")/",
+            label: "Creating Specialized Charts",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 5",
+        values: [{
+            from:  "/Date("+(new Date(2013,2,18)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,2,21)).getTime()+")/",
+            label: "Showing Timelines",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 6",
+        values: [{
+            from:  "/Date("+(new Date(2013,2,21)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,3,7)).getTime()+")/",
+            label: "Visualizing Geographic Data",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 7",
+        values: [{
+            from:  "/Date("+(new Date(2013,3,7)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,3,24)).getTime()+")/",
+            label: "Managing Data in the Browser",
+        }],
+    },{
+        name: " ",
+        desc: "Chapter 8",
+        values: [{
+            from:  "/Date("+(new Date(2013,3,24)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,4,11)).getTime()+")/",
+            label: "Building Data-Driven Web Applications",
+        }],
+    },{
+        name: "Draft",
+        desc: "Complete",
+        values: [{
+            from:  "/Date("+(new Date(2013,4,11)).getTime()+")/",
+            to:    "/Date("+(new Date(2013,4,11)).getTime()+")/",
+            label: "",
+        }],
+    }];
 
-	$("#gantt").gantt({
-	    source: ganttData,	
-	    scale: "weeks",
-	    maxScale: "months",
-	    minScale: "days",
-	    itemsPerPage: 10,
-	});
+    $("#gantt").gantt({
+        source: ganttData,    
+        scale: "weeks",
+        maxScale: "months",
+        minScale: "days",
+        itemsPerPage: 10,
+    });
 
 });
 

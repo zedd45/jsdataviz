@@ -18,7 +18,7 @@ For modern browsers, the heatmap.js library has no additional requirements. The 
     <title></title>
   </head>
   <body>
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="js/heatmap.js"></script>
   </body>
 </html>
@@ -159,8 +159,8 @@ function addPoint() {
     if ((game[i].x !== -1) && (game[i].y !== -1)) {
         var x = Math.round(width  * game[i].x/10);
         var y = height - Math.round(height * game[i].y/10);
-		heatmap.store.augmentDataPoint(x, y, game[i].points);
-		$("#heatmap2 canvas").css("z-index", "1");
+        heatmap.store.augmentDataPoint(x, y, game[i].points);
+        $("#heatmap2 canvas").css("z-index", "1");
     }
     if (nextPoint < game.length) {
         setTimeout(addPoint, 500);
@@ -329,8 +329,8 @@ function addPoint() {
     if ((game[i].x !== -1) && (game[i].y !== -1)) {
         var x = Math.round(width  * game[i].x/10);
         var y = height - Math.round(height * game[i].y/10);
-		heatmap2.store.augmentDataPoint(x, y, game[i].points);
-		$("#heatmap2 canvas").css("z-index", "1");
+        heatmap2.store.augmentDataPoint(x, y, game[i].points);
+        $("#heatmap2 canvas").css("z-index", "1");
     }
     $("#unc").text(pad(game[i].unc));
     $("#duke").text(pad(game[i].duke));

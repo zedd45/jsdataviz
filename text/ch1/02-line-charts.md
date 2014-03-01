@@ -1,7 +1,9 @@
 ### Plotting Continuous Data with a Line Chart
 
 Bar charts work great for visualizing a modest amount of data, but if our data contains many values, bar charts won’t serve us well. To fit each data value on the page, individual bars may be reduced to thin slivers, making it difficult for our users to perceive the data values. For significant amounts of data, the line chart presents the information much more effectively. Line charts are especially good at revealing the overall trends in the data without bogging the user down in individual data points.
-For our example, we can take a look at two measures that may be related to each other: Carbon Dioxide concentration in the atmosphere and global temperatures. We can show how both measures have changed over time, and we’d like to see how strongly related the values may be. Similarities in the trends suggest a strong relationship between the measures. And since we’re looking at trends, the line chart provides the perfect visualization tool.
+
+For our example, we can take a look at two measures that may be related to each other: Carbon Dioxide concentration in the atmosphere and global temperatures. We can show how both measures have changed over time, and we’d like to see how strongly related the values may be. Similarities in the trends suggest a strong relationship between the measures. And since we’re looking at trends, the line chart provides the perfect visualization tool.
+
 Just as in this chapter’s [first example](#id1), we need to include the flotr2 library in our web page and set aside a `<div>` element to contain the chart we’ll construct. The unique aspects of this example begin below.
 
 #### Step 1: Define the Data
@@ -75,9 +77,9 @@ Flotr.draw(
         { data: temp, lines: {show:true}, yaxis: 2 },
      ]
     ,{
-    	grid: {horizontalLines: false, verticalLines: false},
-    	yaxis: {min: 300, max: 400},
-    	y2axis: {min: -0.15, max: 0.69},
+        grid: {horizontalLines: false, verticalLines: false},
+        yaxis: {min: 300, max: 400},
+        y2axis: {min: -0.15, max: 0.69},
      }
 );
 ```
@@ -106,9 +108,9 @@ Flotr.draw(
         { data: temp, lines: {show:true}, yaxis: 2 },
      ]
     ,{
-    	grid: {horizontalLines: false, verticalLines: false},
-    	yaxis: {min: 300, max: 400},
-    	y2axis: {min: -0.15, max: 0.69},
+        grid: {horizontalLines: false, verticalLines: false},
+        yaxis: {min: 300, max: 400},
+        y2axis: {min: -0.15, max: 0.69},
      }
 );
 ```
@@ -143,16 +145,16 @@ Flotr.draw(
         lines: {show:true} },
     ],
     {
-    	title: "Global Temperature and CO<sub>2</sub> Concentration (NOAA Data)",
-    	grid: {horizontalLines: false, verticalLines: false},
-    	yaxis: {min: 300, max: 400},
-    	y2axis: {min: -0.15, max: 0.69, 
-    	        tickFormatter: function(val) {return val+" °C";}},
+        title: "Global Temperature and CO<sub>2</sub> Concentration (NOAA Data)",
+        grid: {horizontalLines: false, verticalLines: false},
+        yaxis: {min: 300, max: 400},
+        y2axis: {min: -0.15, max: 0.69, 
+                tickFormatter: function(val) {return val+" °C";}},
     }
 );
 ```
 
-You may have noticed that we’ve also swapped the position of the CO<sub>2 and temperature graphs. We’re now passing the temperature data series ahead of the CO<sub>2 series. We did that so that the two temperature quantities (baseline and difference) appear next to each other in the legend, making their connection a little more clear to the user. And because the temperature now appears first in the legend, we’ve also swapped the axes, so the temperature axis is on the left. Finally, for the same reason we’ve adjusted the title of the chart.
+You may have noticed that we’ve also swapped the position of the CO<sub>2</sub> and temperature graphs. We’re now passing the temperature data series ahead of the CO<sub>2</sub> series. We did that so that the two temperature quantities (baseline and difference) appear next to each other in the legend, making their connection a little more clear to the user. And because the temperature now appears first in the legend, we’ve also swapped the axes, so the temperature axis is on the left. Finally, for the same reason we’ve adjusted the title of the chart.
 
 <style>
 #line-chart5 .flotr-legend { padding: 5px; background-color: #ececec;}
@@ -298,9 +300,9 @@ Flotr.draw(
         { data: temp, lines: {show:true}, yaxis: 2 },
      ]
     ,{
-    	grid: {horizontalLines: false, verticalLines: false},
-    	yaxis: {min: 300, max: 400},
-    	y2axis: {min: -0.15, max: 0.69},
+        grid: {horizontalLines: false, verticalLines: false},
+        yaxis: {min: 300, max: 400},
+        y2axis: {min: -0.15, max: 0.69},
      }
 );
 var zero = []
@@ -313,9 +315,9 @@ Flotr.draw(
         { data: temp, lines: {show:true}, yaxis: 2 },
      ]
     ,{
-    	grid: {horizontalLines: false, verticalLines: false},
-    	yaxis: {min: 300, max: 400},
-    	y2axis: {min: -0.15, max: 0.69},
+        grid: {horizontalLines: false, verticalLines: false},
+        yaxis: {min: 300, max: 400},
+        y2axis: {min: -0.15, max: 0.69},
      }
 );
 
@@ -327,11 +329,11 @@ Flotr.draw(
         { data: co2, label: "CO<sub>2</sub> Concentration (ppm)", lines: {show:true}, yaxis: 2, color: "#735fb9" },
      ]
     ,{
-    	title: "Global Temperature and CO<sub>2</sub> Concentration (NOAA Data)",
-    	grid: {horizontalLines: false, verticalLines: false},
-    	y2axis: {min: 300, max: 400},
-    	yaxis: {min: -0.15, max: 0.69, 
-    	        tickFormatter: function(val) {return val+" °C";}},
+        title: "Global Temperature and CO<sub>2</sub> Concentration (NOAA Data)",
+        grid: {horizontalLines: false, verticalLines: false},
+        y2axis: {min: 300, max: 400},
+        yaxis: {min: -0.15, max: 0.69, 
+                tickFormatter: function(val) {return val+" °C";}},
         legend: {backgroundOpacity: 0,},
      }
 );

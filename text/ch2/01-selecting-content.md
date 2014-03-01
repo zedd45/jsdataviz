@@ -1,8 +1,17 @@
 ### Selecting Chart Content
 
-If you’re presenting data to a large audience on the web, you may find that different users are especially interested in different aspects of your data. With global GDP data, for example, we might expect that individual users would be most interested in GDP data for their own region of the world. Anticipate users’ questions in this way helps improve our presentation. If we can anticipate those questions, we can construct our visualization to answer them.In the example for this example, we’re targeting a worldwide audience. Because our users may live in any of the world’s regions, we do want to show data for all regions. To accommodate individual users, however, we can make the regions selectable. If particular users doesn’t care about data for particular regions, they can simply choose not to show that data.Interactive visualizations usually require more thought than simple static charts. Not only must the original presentation provide an effective presentation, but the way the user controls the presentation _and_ the way the presentation responds must be effective. It usually helps to consider each of those requirements explicitly.
-1. Make sure the initial, static presentation shows the data effectively.2. Add any user controls to the page and ensure they make sense for the visualization.3. Add the code that makes the controls work. 
-We’ll tackle each of these phases in the example below.
+If you’re presenting data to a large audience on the web, you may find that different users are especially interested in different aspects of your data. With global GDP data, for example, we might expect that individual users would be most interested in GDP data for their own region of the world. Anticipate users’ questions in this way helps improve our presentation. If we can anticipate those questions, we can construct our visualization to answer them.
+
+In the example for this example, we’re targeting a worldwide audience. Because our users may live in any of the world’s regions, we do want to show data for all regions. To accommodate individual users, however, we can make the regions selectable. If particular users doesn’t care about data for particular regions, they can simply choose not to show that data.
+
+Interactive visualizations usually require more thought than simple static charts. Not only must the original presentation provide an effective presentation, but the way the user controls the presentation _and_ the way the presentation responds must be effective. It usually helps to consider each of those requirements explicitly.
+
+1. Make sure the initial, static presentation shows the data effectively.
+2. Add any user controls to the page and ensure they make sense for the visualization.
+3. Add the code that makes the controls work.
+ 
+We’ll tackle each of these phases in the example below.
+
 #### Step 1: Include the Required Javascript Libraries
 
 Since we’re using the flot library to create the chart, we need to include that library in our web pages. And since flot requires jQuery, we’ll include that in our pages as well. Fortunately, both jQuery and flot are popular libraries and they are available on public content distribution networks (CDNs). That gives you the option of loading both from a CDN instead of hosting them on your own site. There are several advantages to relying on a CDN.
@@ -28,7 +37,7 @@ In addition to the jQuery library, flot relies on the HTML _canvas_ feature. Maj
   </head>
   <body>
     <!-- Content goes here -->
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js"></script>
   </body>
@@ -50,7 +59,7 @@ Within our document, we need to create a `<div>` element to contain the chart we
   </head>
   <body>
     <div id='chart' style="width:600px;height:400px;"></div>
-	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js"></script>
   </body>
@@ -303,11 +312,11 @@ $.each(source, function(idx, region) {
         $(input).prop("checked",true);
     }
     var span = $("<span>").css({
-    	'background-color': region.color,
-    	'display':          "inline-block",
-    	'height':           "0.9em",
-    	'width':            "0.9em",
-    	'margin-right':     "0.25em",
+        'background-color': region.color,
+        'display':          "inline-block",
+        'height':           "0.9em",
+        'width':            "0.9em",
+        'margin-right':     "0.25em",
     });
     var label = $("<label>").append(input).append(span).append(region.name);
     $("#controls").append(label);
@@ -433,11 +442,11 @@ $.each(source, function(idx, obj) {
         $(input).prop("checked",true);
     }
     var span = $("<span>").css({
-    	'background-color': obj.color,
-    	'display': "inline-block",
-    	'height': "0.9em",
-    	'width': "0.9em",
-    	'margin-right': "0.25em",
+        'background-color': obj.color,
+        'display': "inline-block",
+        'height': "0.9em",
+        'width': "0.9em",
+        'margin-right': "0.25em",
     });
     var label = $("<label>").addClass("checkbox").append(input).append(span).append(obj.name);
     $("#select-chart5-control").append(label);
@@ -456,11 +465,11 @@ $.each(source, function(idx, obj) {
         $(input).prop("checked",true);
     }
     var span = $("<span>").css({
-    	'background-color': obj.color,
-    	'display': "inline-block",
-    	'height': "0.9em",
-    	'width': "0.9em",
-    	'margin-right': "0.25em",
+        'background-color': obj.color,
+        'display': "inline-block",
+        'height': "0.9em",
+        'width': "0.9em",
+        'margin-right': "0.25em",
     });
     var label = $("<label>").addClass("checkbox").append(input).append(span).append(obj.name);
     $("#select-chart6-control").append(label);

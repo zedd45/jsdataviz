@@ -5,9 +5,23 @@ If you’re ever in doubt about what type of chart best explains your data, your
 #### Step 1: Include the Required Javascript
 
 Since we’re using the flotr2 library to create the chart, we need to include that library in our web pages. The flotr2 package isn’t currently popular enough for public content distribution networks, so you’ll need to download a copy and host it on your own web server. The minimized version (`flotr2.min.js`) provides the best performance, so we’ll us it.
-Flotr2 doesn’t require any other Javascript libraries (such as jQuery), but it does rely on the HTML _canvas_ feature. Major modern browsers (Safari, Chrome, Firefox) support canvas, but until version 9, Internet Explorer (IE) did not. Unfortunately, there are still millions of users with IE8 (or even earlier). To support those users, we can add an additional library (`excanvas.min.js`) to our pages. Since other browsers don’t need this library, we use some special markup to ensure that only IE8 and earlier will bother to load it. Here’s the skeleton with which we start:
+
+Flotr2 doesn’t require any other Javascript libraries (such as jQuery), but it does rely on the HTML _canvas_ feature. Major modern browsers (Safari, Chrome, Firefox) support canvas, but until version 9, Internet Explorer (IE) did not. Unfortunately, there are still millions of users with IE8 (or even earlier). To support those users, we can add an additional library (`excanvas.min.js`) to our pages. Since other browsers don’t need this library, we use some special markup to ensure that only IE8 and earlier will bother to load it. Here’s the skeleton with which we start:
+
 ```language-markup
-<!DOCTYPE html><html lang="en">  <head>    <meta charset="utf-8">    <title></title>  </head>  <body>    <!-- Page Content Here -->	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->    <script src="js/flotr2.min.js"></script>  </body></html>```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <!-- Page Content Here -->
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <script src="js/flotr2.min.js"></script>
+  </body>
+</html>
+```
 
 As you can see, we’re including the Javascript libraries at the end of the document. This approach lets the browser load the document’s entire HTML markup and begin laying out the page while it waits for the server to provide the Javascript libraries.
 
@@ -16,7 +30,19 @@ As you can see, we’re including the Javascript libraries at the end of the doc
 Within our document, we need to create a `<div>` element to contain the chart we’ll construct. This element must have an explicit height and width, or flotr2 won’t be able to construct the chart. We can indicate the element’s size in a CSS style sheet, or we can place it directly on the element itself. Here’s how the document might look with the latter approach. Note that we’ve given it an explicit `id` so we can reference it later.
 
 ```language-markup
-<!DOCTYPE html><html lang="en">  <head>    <meta charset="utf-8">    <title></title>  </head>  <body>    <div id='chart' style="width:300px;height:150px;"></div>	<!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->    <script src="js/flotr2.min.js"></script>  </body></html>```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div id='chart' style="width:300px;height:150px;"></div>
+    <!--[if lt IE 9]><script src="js/excanvas.min.js"></script><![endif]-->
+    <script src="js/flotr2.min.js"></script>
+  </body>
+</html>
+```
 
 #### Step 3: Define the Data
 
@@ -29,7 +55,10 @@ var wins = [[[2006,13],[2007,11],[2008,15],[2009,15],[2010,18],[2011,21],[2012,2
 ```
 
 The flotr2 documentation is quite spartan, which may make it difficult to figure out the format it expects for the data. In this case, however, as in all flotr2 charts, every data point is a two-dimensional array containing both x- and y-values. In our case we’re using the year as the x-value and the number of wins as the y-value. We collect all the values for Manchester City into another array; that array is one series to graph. And finally, we put the Manchester City series inside one more array. We’re only showing one series now, so that’s all that the outermost array contains. It may seem like our arrays are looking a bit like onions, with one layer inside another. Here’s a quick summary.
-* Each data point consists of an x-value and a y-value packaged in an array* Each series consists of a set of data points packaged in an array* The data to chart consists of one or more series packaged in an array
+
+* Each data point consists of an x-value and a y-value packaged in an array
+* Each series consists of a set of data points packaged in an array
+* The data to chart consists of one or more series packaged in an array
 
 #### Step 4: Draw the Chart
 
@@ -128,7 +157,7 @@ With a functional and readable chart, we can now pay some attention to the aesth
 
 ```language-javascript
 Flotr.draw(document.getElementById("chart"),wins, {
-	title: "Manchester City Wins",
+    title: "Manchester City Wins",
     colors: ["#89AFD2"],
     bars: {
         show: true,
@@ -179,14 +208,14 @@ With those changes, our data is structured appropriately, and we can ask flotr2 
 
 ```language-javascript
 Flotr.draw(document.getElementById("chart"),wins2, {
-	title: "Premier League Wins (2011-2012)",
-   	colors: ["#89AFD2", "#1D1D1D", "#DF021D", "#0E204B", "#E67840"],
+    title: "Premier League Wins (2011-2012)",
+       colors: ["#89AFD2", "#1D1D1D", "#DF021D", "#0E204B", "#E67840"],
     bars: {
         show: true,
         barWidth: 0.5,
-	    shadowSize: 0,
-	    fillOpacity: 1,
-	    lineWidth: 0,
+        shadowSize: 0,
+        fillOpacity: 1,
+        lineWidth: 0,
     },
     yaxis: {
         min: 0,
@@ -267,14 +296,14 @@ contentLoaded.done(function() {
         }
     });
     Flotr.draw(document.getElementById("bar-chart4"),wins, {
-    	title: "Manchester City Wins",
-    	colors: ["#89AFD2"],
+        title: "Manchester City Wins",
+        colors: ["#89AFD2"],
         bars: {
             show: true,
             barWidth: 0.5,
-    	    shadowSize: 0,
-    	    fillOpacity: 1,
-    	    lineWidth: 0,
+            shadowSize: 0,
+            fillOpacity: 1,
+            lineWidth: 0,
         },
         yaxis: {
             min: 0,
@@ -297,14 +326,14 @@ var teams = [
     [4, "NEW"],
 ];
 Flotr.draw(document.getElementById("bar-chart5"),wins2, {
-	title: "Premier League Wins (2011-2012)",
-   	colors: ["#89AFD2", "#1D1D1D", "#DF021D", "#0E204B", "#E67840"],
+    title: "Premier League Wins (2011-2012)",
+       colors: ["#89AFD2", "#1D1D1D", "#DF021D", "#0E204B", "#E67840"],
     bars: {
         show: true,
         barWidth: 0.5,
-	    shadowSize: 0,
-	    fillOpacity: 1,
-	    lineWidth: 0,
+        shadowSize: 0,
+        fillOpacity: 1,
+        lineWidth: 0,
     },
     yaxis: {
         min: 0,

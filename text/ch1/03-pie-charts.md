@@ -105,14 +105,14 @@ contentLoaded.done(function() {
    
     var data = [[[0,23]],[[1,22]],[[2,20]],[[3,18]],[[4,17]]];
     Flotr.draw(document.getElementById("pie-chart1"),data, {
-    	colors: ["#ffa44f","#ffdfa4","#97aceb","#735fb9","#b8bfb5"],
+        colors: ["#ffa44f","#ffdfa4","#97aceb","#735fb9","#b8bfb5"],
         pie: {
             show: true,
-    	    shadowSize: 0,
-    	    fillOpacity: 1,
-    	    lineWidth: 0,
-    	    sizeRatio: 0.75,
-    	    labelFormatter: function() { return false;},
+            shadowSize: 0,
+            fillOpacity: 1,
+            lineWidth: 0,
+            sizeRatio: 0.75,
+            labelFormatter: function() { return false;},
         },
         yaxis: {
             showLabels: false,
@@ -126,13 +126,13 @@ contentLoaded.done(function() {
         }
     });
     Flotr.draw(document.getElementById("pie-chart2"),data, {
-    	colors: ["#ffa44f","#ffdfa4","#97aceb","#735fb9","#b8bfb5"],
+        colors: ["#ffa44f","#ffdfa4","#97aceb","#735fb9","#b8bfb5"],
         bars: {
             show: true,
             barWidth: 0.75,
-    	    shadowSize: 0,
-    	    fillOpacity: 1,
-    	    lineWidth: 0,
+            shadowSize: 0,
+            fillOpacity: 1,
+            lineWidth: 0,
         },
         yaxis: {
             min: 0,
@@ -168,14 +168,14 @@ contentLoaded.done(function() {
         {data: [[1,77.6]], }
     ];
     Flotr.draw(document.getElementById("pie-chart4"),data, {
-    	colors: ["#ffa44f","#97ACEB"],
+        colors: ["#ffa44f","#97ACEB"],
         title: "How Much of the World Lives on $1.25/day?",
         pie: {
             show: true,
-    	    sizeRatio: 0.7,
-    	    shadowSize: 0,
-    	    fillOpacity: 1,
-    	    lineWidth: 0,
+            sizeRatio: 0.7,
+            shadowSize: 0,
+            fillOpacity: 1,
+            lineWidth: 0,
         },
         yaxis: {
             showLabels: false,

@@ -164,7 +164,7 @@ contentLoaded.done(function() {
             mousetravel = 0;
             $('#dashboard1 #chart')
                 .sparkline(mpoints, { width: mpoints.length*2, height: 30 });
-			$('#dashboard1 #value').text(mpoints.slice(-1));
+            $('#dashboard1 #value').text(mpoints.slice(-1));
         }
         lastmousetime = timenow;
         setTimeout(mdraw, mrefreshinterval);
