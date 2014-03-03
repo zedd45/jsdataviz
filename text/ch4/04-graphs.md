@@ -24,6 +24,8 @@ The sigmajs library does not depend on any other JavaScript libraries, so we don
 
 As you can see, we’ve set aside a `<div>` to hold our graph We’ve also included the Javascript library as the last part of the `<body>` element, as that provides the best browser performance.
 
+> Note: In most of the examples in this book, we included steps you can take to make your visualizations compatible with older web browsers such as Internet Explorer 8. In this case, however, those approaches degrade performance so severely that they are rarely workable. To view the network graph visualization, your users will need a modern browser.
+
 #### Step 2: Prepare the Data
 
 Our data on the top 25 jazz albums looks like the following snippet. We're only showing the first couple of albums below, but you can see the full list in the book’s [source code](https://github.com/sathomas/jsdataviz).
@@ -229,7 +231,7 @@ s.bind('clickNode', function(ev) {
 
 Now we have a fully interactive network graph. Our users can pan, zoom, click, and tap to their heart’s content.
 
-<figure id="graph-4" style="width:800px;height:800px"></figure>
+<figure id="graph-4" style="width:750px;height:750px"></figure>
 
 <script>
 contentLoaded.done(function() {
@@ -563,7 +565,7 @@ for (var srcIdx=0; srcIdx<albums.length; srcIdx++) {
 }
 s2.refresh();
 
-var s3 = new sigma("graph-3");
+s3 = new sigma("graph-3");
 s3.settings({
 	defaultLabelColor: '#444444',
   defaultNodeColor: '#ffa44f',
@@ -596,8 +598,8 @@ for (var srcIdx=0; srcIdx<albums.length; srcIdx++) {
     }
   }
 }
-s3.startForceAtlas2();
-setTimeout(function() {s3.stopForceAtlas2();}, 2000);
+setTimeout(function() {s3.startForceAtlas2();}, 5000);
+setTimeout(function() {s3.stopForceAtlas2();},  7000);
 
 var s4 = new sigma("graph-4");
 s4.settings({
@@ -632,22 +634,30 @@ for (var srcIdx=0; srcIdx<albums.length; srcIdx++) {
     }
   }
 }
-s4.startForceAtlas2();
-setTimeout(function() {s4.stopForceAtlas2();}, 2000);
+setTimeout(function() {s4.startForceAtlas2();}, 8000);
+setTimeout(function() {s4.stopForceAtlas2();},  9500);
+var lastClicked = null;
 s4.bind('clickNode', function(ev) {
   var nodeIdx = ev.data.node.id;
-  var neighbors = [];
+  var highlight = [];
+  if (lastClicked !== ev.data.node.id) {
+    lastClicked = ev.data.node.id;
+    highlight.push(ev.data.node.id);
+  } else {
+    lastClicked = null;
+  }
   s4.graph.edges().forEach(function(edge) {
-    if ((edge.target === nodeIdx) || (edge.source === nodeIdx)) {
+    if (highlight.length && 
+        ((edge.target === nodeIdx) || (edge.source === nodeIdx)) ) {
       edge.color = '#97aceb';
-      neighbors.push(edge.target);
-      neighbors.push(edge.source);
-    } else {
+      highlight.push(edge.target);
+      highlight.push(edge.source);
+  } else {
       edge.color = '#ffa44f';
     }
   });
   s4.graph.nodes().forEach(function(node) {
-    if (neighbors.some(function(n){return n === node.id})) {
+    if (highlight.length && highlight.some(function(n){return n === node.id})) {
       node.color = '#97aceb';
     } else {
       node.color = '#ffa44f';
