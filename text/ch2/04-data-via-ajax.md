@@ -386,7 +386,8 @@ Our basic chart now gets its data directly from the World Bank. We no longer hav
 
 In this example we’ve seen how to access the World Bank’s application programming interface. The same approach works for many of the organizations providing data on the Internet. In fact, there are so many data sources available today it may be difficult to keep track of what data is available. Two web sites that can help. Each serves as a central repository for both public and private APIs accessible on the Internet.
 
-* [APIhub](http://www.apihub.com)* [ProgrammableWeb](http://www.programmableweb.com)
+* [APIhub](http://www.apihub.com)
+* [ProgrammableWeb](http://www.programmableweb.com)
 
 Many governments also provide a directory of available data and APIs. The United States, for example, centralizes its resources at the [Data.gov](http://www.data.gov) web site.
 
@@ -395,7 +396,21 @@ This example focuses on the AJAX interaction, so the resulting chart is a simple
 <script>
 contentLoaded.done(function() {
 
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    var prefix = settings.url.match(/prefix=(.*?)&/);
+    if (prefix.length > 1) {
+      var callback = prefix[1];
+      if (callback !== callback.toLowerCase()) {
+        window[callback.toLowerCase()] = 
+          new Function("response", callback + "(response)")
+      }
+    }
+	}
+});
+
 regs = [];
+
 
 // request the regions list and save status of the request in a Deferred object
 var deferredRegionsRequest = $.getJSON(
@@ -406,7 +421,7 @@ var deferredRegionsRequest = $.getJSON(
 // create a second Deferred object to track when list processing is complete
 var deferredRegionsAvailable = $.Deferred();
 
-// when the request finishes, start processsing
+// when the request finishes, start processing
 deferredRegionsRequest.done(function(response) {
     // when we finish processing, resolve the second Deferred with the results
     deferredRegionsAvailable.resolve(
@@ -482,6 +497,7 @@ regs = regions;
         }
     );
 });
+
 
 });
 </script>
