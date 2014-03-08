@@ -516,7 +516,9 @@ s1.settings({
 	defaultLabelColor: '#444444',
   defaultNodeColor: '#ffa44f',
 	font: "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
-  sideMargin: 50
+  sideMargin: 50,
+  zoomMin: 1.0,
+  zoomMax: 1.0
 });
 for (var idx=0; idx<albums.length; idx++) {
     var theta = idx*2*Math.PI / albums.length;
@@ -535,7 +537,9 @@ s2.settings({
 	defaultLabelColor: '#444444',
   defaultNodeColor: '#ffa44f',
 	font: "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
-  sideMargin: 50
+  sideMargin: 50,
+  zoomMin: 1.0,
+  zoomMax: 1.0
 });
 for (var idx=0; idx<albums.length; idx++) {
     var theta = idx*2*Math.PI / albums.length;
@@ -570,7 +574,9 @@ s3.settings({
 	defaultLabelColor: '#444444',
   defaultNodeColor: '#ffa44f',
 	font: "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
-  sideMargin: 50
+  sideMargin: 50,
+  zoomMin: 1.0,
+  zoomMax: 1.0
 });
 for (var idx=0; idx<albums.length; idx++) {
     var theta = idx*2*Math.PI / albums.length;
@@ -606,7 +612,9 @@ s4.settings({
 	defaultLabelColor: '#444444',
   defaultNodeColor: '#ffa44f',
 	font: "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
-  sideMargin: 50
+  sideMargin: 50,
+  zoomMin: 1.0,
+  zoomMax: 1.0
 });
 for (var idx=0; idx<albums.length; idx++) {
     var theta = idx*2*Math.PI / albums.length;
