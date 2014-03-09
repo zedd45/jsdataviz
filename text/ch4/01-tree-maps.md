@@ -6,7 +6,7 @@ There are several algorithms for constructing tree maps from hierarchical data; 
 
 #### Step 1: Include the Required Libraries
 
-The treemap-squared library itself depends on the [Raphaël](http://raphaeljs.com) library for low-level drawing functions. Our markup, therefore, must include both libraries. The Raphaël library is popular enough for public content distribution networks to support. In the example markup below we’re relying on CloudFlare’s CDN. We’ll have to use our own resourses, however, to host the treemap-squared library.
+The treemap-squared library itself depends on the [Raphaël](http://raphaeljs.com) library for low-level drawing functions. Our markup, therefore, must include both libraries. The Raphaël library is popular enough for public content distribution networks to support. In the example markup below we’re relying on CloudFlare’s CDN. We’ll have to use our own resources, however, to host the treemap-squared library.
 
 > Note: Chapter 2 includes a more extensive discussion of content distributions networks and the trade-offs involved in using them.
 

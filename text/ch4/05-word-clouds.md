@@ -204,7 +204,7 @@ With these few lines of code, our word cloud is now interactive.
 <script>
 contentLoaded.done(function() {
 
-window.tags = [
+var tags = [
  ["c#", 601251],
  ["java", 585413],
  ["javascript", 557407],
