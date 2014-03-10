@@ -525,6 +525,178 @@ Now our time line is starting to look like an actual time _line._ In your own pa
 
 #### Step 8: Add Interactivity
 
+The full details on all 40 of Shakespeare’s plays might be a little overwhelming for a first view of our time line. The visualization would be more effective if it showed only the play titles at first, but let users reveal more details through interactions. Because we’re building this visualization ourselves, we have all the control necessary to make that happen.
+
+First we’ll set up a few additional styles. There are several ways to hide the play details with CSS, the most obvious being the `display:none` property. As we’ll see a little later though, a better choice for our timeline is setting the 	`max-height` to 0. If the maximum height of an element is 0, then, in theory, it should be invisible. In practice we also have to set the `overflow` property to `hidden`. Otherwise, even though the `<dl>` element itself has no height, the browser will display the content that overflows from it. Since we want our description lists to start out hidden, we can set that property as the default. 
+
+```language-css
+.timeline li dl {
+    max-height: 0;
+    overflow: hidden;
+}
+```
+
+To reveal a play’s details, users click on the play’s title in the `<cite>` element. So that users know that they can click on the title, we’ll change the mouse cursor from the normal arrow to the "clickable" hand. We can also change the `display` property from the default `inline` to `block`. That change gives users a larger and more consistent area to click.
+
+```language-css
+.timeline li > cite {
+    cursor: pointer;
+    display: block;
+}
+```
+
+Finally, we need a way to reveal a play’s details. We’ll do that by adding a class of `"expanded"` to the `<li>` for the play. When that class is present, our styles should override the `max-height` of `0`.
+
+```language-css
+.timeline li.expanded dl {
+    max-height: 40em;
+}
+```
+
+The exact value for the expanded `max-height` will depend on the content. In general, though, it should be large enough to reveal the full details for the item. It’s okay to make it a little larger than necessary "just in case." Don’t go overboard, however, and make it unreasonably large. (We’ll see why at the end of this step.)
+
+With these styles in place we can add a bit of JavaScript to control them. It won’t take much. The first step is writing an event handler that will be called when users click. That function will take a single parameter, specifically an `Event` object, with details about the click. One of those details is the `.target` property which will contain a reference to the specific element of the page on which the user clicked. We only care about clicks on the `<cite>` elements.
+
+```language-javascript
+var clicked = function(ev) {
+    if (ev.target.nodeName === "CITE") {
+        // Do something...
+    }
+};
+```
+
+Once we know that a `<cite>` was clicked, we find the `<li>` element that is its parent. We can then check to see if the `<li>` has the `"expanded"` class. If not, we add it. If the class is already present, we remove it. Our approach is a bit primitive because it only allows one class to be defined for the `<li>`. That’s all we need for this example, though, so we’ll stick with it.
+
+```language-javascript
+var clicked = function(ev) {
+    if (ev.target.nodeName === "CITE") {
+        var li = ev.target.parentNode;
+        if (li.className === "expanded") {
+            li.className = "";
+        } else {
+            li.className = "expanded";
+        }
+    }
+};
+```
+
+
+> Note: modern browsers have a more sophisticated interface for controlling the class attributes of elements. That interface is the `classList`, and it easily supports multiple classes per element, as well as toggling the class on and off with a single function. Older browsers (namely Internet Explorer version 9 and earlier) don’t support that interface, however. Since we don’t need the extra functionality, the older `className` is sufficient for this example.
+
+With our event handling function defined, we can associate it with clicks anywhere on the timeline. The standard `addEventListener` method creates the association for any element.
+
+```language-javascript
+document.getElementById("timeline").addEventListener("click", clicked);
+```
+
+> Note: You might be curious as to why we’re associating an event listener with the entire time line visualization instead of, for example, adding individual event listeners to each `<cite>`. That alternative would eliminate the need to check the event target in the handler; however, it turns out that it’s much less efficient than the approach we’re taking. Event listeners can consume a fair bit of JavaScript resources, and our page will perform better if we keep them to a minimum.
+
+If you’re using jQuery, the required code is even simpler:
+
+```language-javascript
+$("#timeline").on("click", "cite", function() {
+    $(this).parent("li").toggleClass("expanded");
+})
+```
+
+We’re almost ready to show our new and improved time line to the world, but there’s one final refinement we can make. Our current version shows or hides a play’s details all at once. This transition can be abrupt to users as content appears or disappears instantly. We can provide a better experience by gracefully transitioning between the two states, and a natural transition for this time line is animating the height of the content. When the details are hidden, they have a height of 0. And when we want to show them, we will gradually animate the height to its natural value.
+
+It is possible to animate content using JavaScript. The jQuery library, in fact, has a fairly extensive set of animation functions. In modern browsers, however, it is much better to animate content using CSS transitions. Web browsers are optimized for CSS, often offloading the computations to special high performance graphics co-processors. In those cases CSS-based animations can perform several orders of magnitude better than JavaScript. The only disadvantage to using CSS for animations is a lack of support in older browsers. But animation isn’t usually _critical_ to most web pages. Sure it’s nice, but if a user with an older browser misses out on the graceful transitions, it isn’t the end of the world. The web page will still _function_ just fine.
+
+The CSS `transition` property is the simplest way to define a CSS animation. It specifies the actual property to animate, the duration of the animation, and the _easing function_ to follow. Here’s a rule we could use in our example:
+
+```language-css
+.timeline li dl {
+    transition: max-height 500ms ease-in-out;
+}
+```
+
+This rule defines a transition for the time line’s `<dl>` elements. It specifies that the property to animate is `max-height`, so the transition will take effect whenever an element’s `max-height` property changes. That property is exactly the one we modify when the `"expanded"` class is added or removed. The transition rule also specifies that the animation should take 500 ms, and that it should "ease in" and "ease out." This last property indicates that the animation should start slowly; speed up, and then slow down again before finishing. That behavior usually provides a more natural appearance than animating at a constant speed.
+
+CSS transitions can animate many CSS properties, but there is one important constraint. Both the starting and ending values must be explicit. That constraint explains why we’re animating `max-height` instead of `height`, even though it’s really just `height` that we want to change. Unfortunately, we can’t animate `height` because its has no explicit value when the description list is expanded. Every `<dl>` will have its own height based on its content, and there’s no way we can predict those values in our CSS. The `max-height` property, on the other hand, gives us explicit values for both states—`0` and `40em` in this example—so CSS can animate its transitions. We just have to be sure that no `<dl>` has content more than `40em` high. Otherwise the extra content will be cut off. This doesn’t mean, however, that we should set the `max-height` for expanded `<dl>` elements to an astronomical value. To see why, consider what would happen if we transitioned `max-height` to `1000em` for a `<dl>` that only needed `10em` of height. Ignoring (for simplicity) the complications of easing, it would only take 1/100<sup>th</sup> of the full transition time before the full content of the element was visible. The animation that we had planned to take 500 ms is over in 5 ms instead.
+
+There is one final complication with CSS transitions. Most browsers implemented the functionality before the official standard was finalized. To make sure their implementations wouldn’t conflict with potential changes in the official standards, browser vendors initially implemented transitions using a proprietary syntax. That syntax adds a prefix (`-webkit-` for Safari and Chrome, `-moz-` for FireFox, and `-o-` for Opera) to the property name. To cover all the major browsers, we must include a rule with each prefix.
+
+```language-css
+.timeline li dl {
+    -webkit-transition: max-height 500ms ease-in-out;
+       -moz-transition: max-height 500ms ease-in-out;
+         -o-transition: max-height 500ms ease-in-out;
+            transition: max-height 500ms ease-in-out;
+}
+```
+
+> Note: Internet Explorer doesn’t need a prefix because Microsoft didn’t implement transitions until the standard was stable. Also, there’s no harm in specifying multiple prefixes since browsers simply ignore properties they don’t understand.
+
+Now our hand-crafted time line responds perfectly to user interactions. Here’s the complete visualization.
+
+<style>
+.timeline3 li {
+    list-style-type: none;
+}
+.timeline3 li > time + time:before {
+    content: "-";
+}
+.timeline3 li {
+    border-left: 2px solid #444444;
+}
+.timeline3 dl,
+.timeline2 li {
+    margin: 0;
+}
+.timeline3 li {
+    position: relative;
+    padding-left: 1em;
+    padding-bottom: 1em;
+}
+.timeline3 li > time {
+    position: absolute;
+    left: -3.5em;
+}
+.timeline3 li > time + time {
+    top: 1em;
+    left: -3.85em;
+}
+.timeline3 {
+    padding-left: 5em;
+    padding-top: 1.5em;
+}
+.timeline3 li > cite {
+    display: block;
+    font-size: 1.5em;
+    line-height: 1em;
+    padding-bottom: 0.5em;
+}
+.timeline3 li > time:first-of-type:after {
+	content: "\00B7";
+	position: absolute;
+	right: -0.35em;
+	top: -0.05em;
+	font-size: 5.2em;
+}
+.timeline3 dl {
+    padding-left: 1.5em;
+}
+.timeline3 li > cite {
+    display: block;
+    cursor: pointer;
+}
+.timeline3 li dl {
+    max-height: 0;
+    overflow: hidden;
+}
+.timeline3 li.expanded dl {
+    max-height: 60em;
+}
+.timeline3 li dl {
+    -webkit-transition: max-height 500ms ease-in-out;
+       -moz-transition: max-height 500ms ease-in-out;
+         -o-transition: max-height 500ms ease-in-out;
+           transition: max-height 500ms ease-in-out;
+}
+</style>
+
+<div class="timeline3" id="javascript-4"></div>
 
 <script>
 contentLoaded.done(function() {
@@ -537,7 +709,7 @@ allplays = [
   { "play": "Henry VI, Part 1",                "date": "1591",      "record": "possibly in Philip Henslowe's diary. On 3 March 1592, Henslowe reports seeing a new play entitled Harey Vj (i.e. Henry VI) which could be a reference to 1 Henry VI. An entry is found in the Stationers' Register in September 1598 which refers to \"The first and Second parte of Henry VJ'. Most critics, however, feel this probably refers to what we today call 2 Henry VI and 3 Henry VI, not 1 Henry VI. The first definite record of the play was not until the First Folio in 1623.", "published": "First Folio (1623), as The first Part of Henry the Sixt", "performance": "possibly on 3 March 1592 at The Rose in Southwark, as seen by Philip Henslowe; earliest definite performance was on 13 March 1738 at Covent Garden in what seems to have been a stand-alone performance.", "evidence": "On 3 March 1592, Philip Henslowe saw a new play entitled Harey Vj, but gives no further information. In August, Thomas Nashe published Piers Penniless his Supplication to the Devil, in which he refers to a play he had recently seen featuring a rousing depiction of Lord Talbot, a major character in 1 Henry VI. Most critics take Nashe's reference to Talbot as proof that the play Henslowe saw was 1 Henry VI. As such, to have been a new play in March 1592, it was most likely written some time in 1591. Furthermore, many critics consider 1 Henry VI to have been written as a prequel to the successful two-part play, The Contention and True Tragedy. Possibly co-written with Thomas Nashe and/or other unidentified dramatists." },
   { "play": "Titus Andronicus",                "date": "1591-1592", "record": "Philip Henslowe's diary, 24 January 1594. On 6 February 1594, the play was entered into the Stationers' Register as \"a booke intitled a Noble Roman Historye of Tytus Andronicus'.", "published": "version of the play published in quarto in February 1594 as The Most Lamentable Romaine Tragedy of Titus Andronicus (first known printing of a Shakespeare play). The play was republished in quarto in 1600 and 1611. There are only minor differences between the 1594 quarto text and the later 1623 First Folio text (i.e. the 1594 text is not considered a bad quarto or a reported text). The Folio text appears under the title The Lamentable Tragedy of Titus Andronicus.", "performance": "on 24 January 1594 at the Rose Theatre in Southwark, as recorded in Henslowe's diary.", "evidence": "According to the title page of the 1594 quarto, the play had been performed by Pembroke's Men, a company which ceased performing in September 1593. As such, the play must have been composed some time prior to September. Additionally, it is unlikely to have been written later than June 1592, as that was when the London theatres were closed due to an outbreak of plague. The theatres would remain shut for the better part of two years, not fully reopening until March 1594 and Shakespeare concentrated most of his energies during this period on poetry. As such, the play was most likely composed sometime between late-1591 and early 1592. Possibly co-written with George Peele" },
   { "play": "Richard III",                     "date": "1592",      "record": "version of the play entered into the Stationers' Register on 20 October 1597 as \"a booke intituled, The tragedie of kinge Richard the Third wth the death of the duke of Clarence'.", "published": "version of the play published in quarto in December 1597 as The tragedy of King Richard the third. Containing, his treacherous plots against his brother Clarence: the pittiefull murther of his innocent nephewes: his tyrannicall usurpation: with the whole course of his detested life, and most deserved death. The Folio text appears under the title The Tragedy of Richard the Third, with the Landing of Earle Richmond, and the Battell at Bosworth Field.", "performance": "The play was performed extensively in Shakespeare's lifetime; it is mentioned in Palladis Tamia in 1598 (as \"Richard the 3.'), and by the time of the First Folio in 1623, had been published in quarto six times (1597, 1598, 1603, 1605, 1612 and 1622), and referenced by multiple writers of the day. Regarding specific performances however, there is little solid evidence. In 1602, John Manningham mentions seeing Richard Burbage playing the role of Richard III, but he offers no further information. The earliest definite performance was at St James's Palace on 16 or 17 November 1633 by the King's Men.", "evidence": "It is known that Richard III was definitely a sequel to 3 Henry VI, which was on-stage by 23 June 1592, hence Richard III must have been written later than early 1592. Additionally, it has been argued that the play contains evidence suggesting it was originally written for Strange's Men, but then rewritten for Pembroke's Men, a company which formed in mid-1592. Also, with the closure of the theatres due to an outbreak of plague in June 1592, the play was unlikely to have been written any later than that, all of which suggests a date of composition as sometime in early-1592." },
-  { "play": "Edward III[b]",                   "date": "1592-1593", "record": "entered into the Stationers' Register on 1 December 1595 as \"a booke intituled Edward the Third and the blacke prince their warres wth kinge Iohn of Fraunce'.", "published": "published in quarto in 1596 as The Raigne Of King Edvvard the third (republished in 1599)", "performance": "although it is known from the 1596 quarto title page that the play was performed in the 1590s, the earliest recorded performance was not until 6 March 1911 at the Little Theatre in London, directed by Gertrude Kingston and William Poel. However, this production presented only the first half of the play (dealing with the King's infatuation with the Countess of Salisbury). Performed under the title, The King and the Countess, it was presented in a single matinée performance with the anonymous sixteenth century liturgical drama, Jacob and Esau. The first known performance of the complete text took place in June 1987, at the Theatr Clwyd, directed by Toby Robertson.", "evidence": "Obviously, the play was written by December 1595. According to the title page of the quarto, it had been performed recently in London, but no company information is provided. This could mean that the company that performed the play had disbanded during the closure of the theatres from June 1592 to March 1594. Furthermore, internal evidence suggests that the play may have been specifically written for Pembroke's Men, who ceased performing in September 1593. This places the date of composition as most likely somewhere between early 1592 and September 1593." },
+  { "play": "Edward III",                   "date": "1592-1593", "record": "entered into the Stationers' Register on 1 December 1595 as \"a booke intituled Edward the Third and the blacke prince their warres wth kinge Iohn of Fraunce'.", "published": "published in quarto in 1596 as The Raigne Of King Edvvard the third (republished in 1599)", "performance": "although it is known from the 1596 quarto title page that the play was performed in the 1590s, the earliest recorded performance was not until 6 March 1911 at the Little Theatre in London, directed by Gertrude Kingston and William Poel. However, this production presented only the first half of the play (dealing with the King's infatuation with the Countess of Salisbury). Performed under the title, The King and the Countess, it was presented in a single matinée performance with the anonymous sixteenth century liturgical drama, Jacob and Esau. The first known performance of the complete text took place in June 1987, at the Theatr Clwyd, directed by Toby Robertson.", "evidence": "Obviously, the play was written by December 1595. According to the title page of the quarto, it had been performed recently in London, but no company information is provided. This could mean that the company that performed the play had disbanded during the closure of the theatres from June 1592 to March 1594. Furthermore, internal evidence suggests that the play may have been specifically written for Pembroke's Men, who ceased performing in September 1593. This places the date of composition as most likely somewhere between early 1592 and September 1593." },
   { "play": "The Comedy of Errors",            "date": "1594",      "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Errors\"", "published": "First Folio (1623)", "performance": "probably on Innocents Day, 28 December 1594 at Gray's Inn (one of the four London Inns of Court). The only known evidence for this performance is the Gesta Grayorum, a 1688 text printed for William Canning based on a manuscript apparently handed down from the 1590s, detailing the \"Prince of Purpoole\" festival from December 1594 to February 1595.[c] According to the text, after a disastrous attempt to stage \"some notable performance […] it was thought good not to offer any thing of Account, saving Dancing and Revelling with Gentlewomen; and after such Sports, a Comedy of Errors (like to Plautus his Menaechmus) was played by the Players. So that Night was begun, and continued to the end, in nothing but Confusion and Errors; whereupon, it was ever afterwards called, The Night of Errors.\" As Comedy of Errors is indeed based on Menaechmus, this is almost universally accepted as a reference to an otherwise unrecorded performance of the play, probably by Shakespeare's own company, the newly formed Lord Chamberlain's Men.", "evidence": "traditionally, the play has been dated quite early (Ros King, for example, dates it 1586-1589), and has often been seen as Shakespeare's first comedy, perhaps his first play. However, stylistic and linguistic analysis (proportion of verse to prose, amount of rhyme, use of colloquialism in verse, and a rare word test) has placed it closer to the composition of Richard II and Romeo and Juliet, both of which were written in 1594 or 1595. More specifically, the limited setting (it is one of only two Shakespeare plays to observe the Classical unities) and the brevity of the play (Shakespeare's shortest at 1777 lines), along with the great abundance of legal terminology, suggests to some critics the probability of it being written especially for the Gray's Inn performance, which would place its composition in the latter half of 1594. If it was written for Gray's Inn, it most likely represents the first play by Shakespeare which was specifically commissioned. In this case, that commission could have come from Henry Wriothesley, Earl of Southampton, a member of the Inns of Court, and Shakespeare's patron." },
   { "play": "Love's Labour's Lost",            "date": "1594-1595", "record": "a version of the play was published in quarto in 1598, although the exact date is unknown as it was never entered into the Stationers' Register. Also in 1598, Robert Tofte mentioned the play in his sonnet sequence Alba. The months minde of a melancholy lover; \"Love's Labour Lost, I once did see, a play/Y'cleped so, so called to my pain.\" The date of publication of Alba is unknown as it also was not entered into the Register. Additionally, the play is mentioned in Meres' Palladis Tamia (registered on 7 September, with a dedication dated 10 October). It is unknown exactly which one of these three constitutes the first official record of the play.", "published": "version of the play published in quarto in 1598 as A Pleasant Conceited Comedie called Loves labors lost (the first known printing of a Shakespearean play to include his name on the title page). The Folio text appears under the title Love's Labour's lost.", "performance": "according to the quarto title page, the play was performed at court for Queen Elizabeth sometime over Christmas 1597, however, no further information is provided. The earliest definite performance took place some time between 8 and 15 January 1605, for Anne of Denmark, at either Henry Wriothesley or Robert Cecil's house.", "evidence": "Obviously, the play was written by Christmas 1597, but narrowing the date further has proved difficult, with most efforts focusing upon stylistic evidence. Traditionally, it was seen as one of Shakespeare's earliest plays (Charles Gildon wrote in 1710; \"since it is one of the worst of Shakespeare's Plays, nay I think I may say the very worst, I cannot but think it is his first.') For much of the eighteenth century, it tended to be dated 1590, until Malone's newly constructed chronology in 1778, which dated it 1594. In his 1930 chronology, E.K. Chambers found the play to be more sophisticated than Malone had allowed for, and dated it 1595. Today most scholars tend to concur with a date of 1594-1595, and the play is often grouped with the \"lyrical plays'; Richard II, Romeo and Juliet and A Midsummer Night's Dream, because of its prolific use of rhyming. These four plays are argued to represent a phase of Shakespeare's career where he was experimenting with rhyming iambic pentameter as an alternative form to standard blank verse; Richard II has more rhymed verse than any other history play (19.1%), Romeo and Juliet more than any other tragedy (16.6%) and Love's Labour's and Midsummer Night more than any other comedy (43.1% and 45.5% respectively). All four tend to be dated to 1594/1595. In support of this, Ants Oras' pause test places the play after Richard III, which is usually dated 1592. Furthermore, Taylor finds possible allusions to the Gray's Inn revels of December 1594 (specifically the Muscovite masque in Act 5, Scene 2), and also finds plausible Geoffrey Bullough's argument that the satire of the King of Navarre (loosely based on Henry of Navarre, who was associated with oath breaking after abjuring Protestantism in 1593) favours a date after December 1594, when Henry survived an assassination attempt." },
   { "play": "Love's Labour's Won",             "date": "1595-1596", "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Love labours wonne\"", "published": "published in quarto some time prior to 1603", "performance": "there are no recorded performances of the play", "evidence": "There are only two known references to this play. One is in Meres' Palladis Tamia, the other is on a list by Christopher Hunt, dated August 1603, which gives a list of published plays sold by an Exeter bookseller. Up until 1953, only Meres' reference was known, until Hunt's two pages of handwriting were discovered in the backing of a copy of Thomas Gataker's Certaine Sermones. The discovery was handed over to T.W. Baldwin, who published his findings in 1957 as Shakespeare's Love's Labour's Won. The title suggests the play was written as a sequel to Love's Labour's Lost, which is partially supported by the unusually open-ended nature of that play, hence Love's Labour's Won's position in the Oxford chronology. However, whether the play ever existed has been debated, with some critics speculating that it is simply another name for one of Shakespeare's known plays, a situation similar to Henry VIII, which was originally performed with the title All is True. As Meres refers to The Two Gentlemen of Verona, The Comedy of Errors and The Merchant of Venice, prior to the discovery of the Hunt reference, a common suggestion was The Taming of the Shrew, but as Hunt mentions this play, it could not be Love's Labour's Won. Although Much Ado About Nothing, All's Well That Ends Well and Troilus and Cressida have also been cited as possibilities, these plays tend to be dated later than 1598 (much later in the case of Troilus, although the argument is that Love's Labour's Won is an early draft), and as there are no other pre-1598 Shakespearean comedies with which to equate it, it seems certain that the play did exist, that it was performed and published, but that it has since been lost." },
@@ -649,6 +821,54 @@ plays.forEach(function(play) {
     listItem.appendChild(descList);
     list.appendChild(listItem);
 })
+
+plays = allplays;
+container = document.getElementById("javascript-4");
+list = document.createElement("ol");
+container.appendChild(list);
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        var time = document.createElement("time");
+        time.textContent = dates[0];
+        listItem.appendChild(time);
+        time = document.createElement("time");
+        time.textContent = dates[1];
+        listItem.appendChild(time);
+    } else {
+        var time = document.createElement("time");
+        time.textContent = play.date;
+        listItem.appendChild(time);
+    }
+    var cite = document.createElement("cite");
+    cite.textContent = play.play;
+    listItem.appendChild(cite);
+    var descList = document.createElement("dl");
+    descTerms.forEach(function(term)  {
+        if (play[term.key]) {
+            var descTerm = document.createElement("dt");
+            descTerm.textContent = term.label;
+            descList.appendChild(descTerm);
+            var descElem = document.createElement("dd");
+            descElem.textContent = play[term.key];
+            descList.appendChild(descElem);
+        }
+    });
+    listItem.appendChild(descList);
+    list.appendChild(listItem);
+})
+var clicked = function(ev) {
+    if (ev.target.nodeName === "CITE") {
+        var li = ev.target.parentNode;
+        if (li.className === "expanded") {
+            li.className = "";
+        } else {
+            li.className = "expanded";
+        }
+    }
+};
+document.getElementById("javascript-4").addEventListener("click", clicked);
 
 });
 </script>
