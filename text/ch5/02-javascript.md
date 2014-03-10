@@ -93,7 +93,7 @@ If you look at the resulting HTML that underlies that list, it’s pretty simple
 </ol>
 ```
 
-In the spirit of semantic HTML, we should stop and consider if that markup can be improved. Since it appears first in our list items, let’s consider the date or date range for a play. Although it hasn’t been without controvery, HTML5 has defined support for a `<time>` element to contain dates and times. Using that element as a wrapper will make our dates more semantic. The second part of each list item is the title of the play. As it happens, HTML5’s `<cite>` element is perfect for that content. To quote the [current standard](http://www.whatwg.org/specs/web-apps/current-work/multipage/text-level-semantics.html#the-cite-element):
+In the spirit of semantic HTML, we should stop and consider if that markup can be improved. Since it appears first in our list items, let’s consider the date or date range for a play. Although it hasn’t been without controversy, HTML5 has defined support for a `<time>` element to contain dates and times. Using that element as a wrapper will make our dates more semantic. The second part of each list item is the title of the play. As it happens, HTML5’s `<cite>` element is perfect for that content. To quote the [current standard](http://www.whatwg.org/specs/web-apps/current-work/multipage/text-level-semantics.html#the-cite-element):
 
 > The cite element represents the title of a work (e.g. a book, […] **a play,** […] etc). This can be a work that is being quoted or referenced in detail (i.e. a citation), or it can just be a work that is mentioned in passing. [Emphasis added.]
 
@@ -186,7 +186,7 @@ plays.forEach(function(play) {
 })
 ```
 
-Our timeline is still lacking a bit of visual apeal, but it has a much richer set of content. In fact, even without any styling at all, it still communicates the essential data quite well.
+Our timeline is still lacking a bit of visual appeal, but it has a much richer set of content. In fact, even without any styling at all, it still communicates the essential data quite well.
 
 <div id="javascript-3"></div>
 
@@ -299,9 +299,9 @@ $.each(plays, function(idx, play) {
 $("#timeline").append($list);
 ```
 
-#### Step 6: Style the Time Line
+#### Step 6: Fix Time Line Problems with CSS
 
-Now that we’ve built our time line’s content in HTML, it’s time to define the styles that determine its appearance. In this example we’ll focus on the functional aspects of styling rather than pure visual elements such as fonts and colors. Those are styles that are undoubtedly specific to your own web site.
+Now that we’ve built our time line’s content in HTML, it’s time to define the styles that determine its appearance. Throughout this example we’ll focus on the functional aspects of styling rather than pure visual elements such as fonts and colors. Those are styles that are undoubtedly specific to your own web site.
 
 The first step is a simple one. We want to get rid of the numbering (1, 2, 3, ...) that browsers normally add to ordered list items. A single rule banishes them from our time line. By setting the `list-style-type` to `none` we tell the browser not to add any special characters to our list items.
 
@@ -311,7 +311,7 @@ The first step is a simple one. We want to get rid of the numbering (1, 2, 3, ..
 }
 ```
 
-We can also use CSS rules to add some punctuation to our semantic HTML. First we look for places where two `<time>` elements appear as siblings. The CSS adjacent selector `+` let’s us match the second of those `<time>` tags, and we can then use the `:before` pseudo-selector to add a hyphen before it.
+We can also use CSS rules to add some punctuation to our semantic HTML. First we look for places where two `<time>` elements appear right after each other while skipping isolated `<time>` tags. The trick to finding `<time>` pairs is the CSS adjacent selector `+`. A rule with `time + time` specifies a `<time>` element that immediately follows a `<time>` element. To add the punctuation, we use the `:before` pseudo-selector to specify what we want to happen _before_ this second `<time>` tag, and we set the `content` property to indicate the content we want inserted.
 
 ```language-css
 .timeline li > time + time:before {
@@ -319,9 +319,9 @@ We can also use CSS rules to add some punctuation to our semantic HTML. First we
 }
 ```
 
-If you haven’t seen the `>` before in a CSS rule, it’s the direct descendent selector. In this example, it means that the `<time>` element must be an immediate child of the `<li>` element. We’re using this so our rules won’t inadvertantly apply to other `<time>` elements that may be nested deeper within the list item’s content.
+If you haven’t seen the `>` before in a CSS rule, it’s the direct descendent selector. In this example, it means that the `<time>` element must be an immediate child of the `<li>` element. We’re using this selector so our rules won’t inadvertently apply to other `<time>` elements that may be nested deeper within the list item’s content.
 
-To finish up the punctuation, let’s add a colon and space after the last of the `<time>` elements in a list item. We have to use two pseudo-selectors for this rule. The `:last-of-type` selector will target the last `<time>` element in the list item. That’s the first `<time>` if there’s only one and the second `<time>` if both are present. Then we add the `:after` pseudo-selector to add content after that `<time>` element.
+To finish up the punctuation, let’s add a colon and space after the last of the `<time>` elements in a list item. We have to use two pseudo-selectors for this rule. The `:last-of-type` selector will target the last `<time>` element in the list item. That’s the first `<time>` if there’s only one and the second `<time>` if both are present. Then we add the `:after` pseudo-selector to insert content after that `<time>` element.
 
 ```language-css
 .timeline li > time:last-of-type:after {
@@ -369,6 +369,89 @@ With these changes we’ve cleaned up all of the obvious problems with our time 
 
 Now we can add a little flair to the visualization.
 
+#### Step 7: Add Styles to Visually Structure the Time Line
+
+The next set of CSS styles will improve the visual structure of the time line. First among those improvements will be making the time line look more like, well, a _line._ To do that we can add a border to the left side of the `<li>` elements. When we do that, we’ll also want to make sure that those `<li>` elements don’t have any margins, as margins would introduce gaps in the border and break the continuity of the line.
+
+```language-css
+.timeline li {
+    border-left: 2px solid black;
+}
+.timeline dl,
+.timeline li {
+    margin: 0;
+}
+```
+
+These styles add a nice vertical line on the left side of our entire time line. Now that we have that line, we can shift the dates over to the left side of it. The shift requires rules for the parent `<li>` as well as the `<time>` elements. For the parent `<li>` elements we want their `position` specified as `relative`.
+
+```language-css
+.timeline li {
+    position: relative;
+}
+```
+
+By itself, this rule doesn’t actually change our time line. It does, however, establish a _positioning context_ for any elements that are children of the `<li>`. Those children include the `<time>` elements that we want to move. With the `<li>` set to `position: relative` we can now set the `<time>` children to `position: absolute`. This rule lets us specify exactly where the browser should place the time elements, _relative_ to the parent `<li>`. We want to move all `<time>` elements to the left, and we want to move the second `<time>` element down. The first selector below will target both of our `<time>` tags while the second selector, using the same `time + time` trick described above, targets only the second of two `<time>` tags.
+
+```language-css
+.timeline li > time {
+    position: absolute;
+    left: -3.5em;
+}
+.timeline li > time + time {
+    top: 1em;
+    left: -3.85em;
+}
+```
+
+Notice that we’re using `em` units rather than pixel `px` units for this shift. By using `em` units we define our shift to be relative to the current font size, regardless of what it is. That gives us the freedom to change the font size without having to go back and tweak any pixel positioning.
+
+The specific values for the position shift may need adjustment depending on the specific font face, but, in general, we use a negative `left` position to shift content further to the left than it would normal appear, and a positive `top` position to move the content down the page.
+
+After moving the dates to the left of the vertical line, we’ll also want to shift the main content a bit to the right so it doesn’t crowd up against the line. The `padding-left` property takes care of that. And while we’re adjusting the left padding we can also add a bit of padding on the bottom to separate each play from the other.
+
+```language-css
+.timeline li {
+    padding-left: 1em;
+    padding-bottom: 1em;
+}
+```
+
+With the dates and the main content on opposite sides of our vertical line, there’s no longer any need for any punctuation after the date. We can, therefore, remove the style that adds a colon after the last `<time>` element.
+
+<pre class="language-css" style="text-decoration:line-through"><code class="  language-css">.timeline li &gt; time:last-of-type:after {
+    content: ": ";
+}
+</code></pre>
+
+The fact that we’re able to make this change highlights one of the reasons for using CSS to add the colon in the first place. If we had included the punctuation explicitly in the markup (by, for example, generating it in the JavaScript code), then our markup would be more tightly coupled to our styles. If a style modification changed whether or not the colon was appropriate, we would have to go back and change the JavaScript as well. With the approach that we’re using here, however, styles and markup are much more independent. Any style changes are isolated to our CSS rules; no modifications to the JavaScript are required.
+
+As part of the improved visual styling we can make a few other changes to our time line. We can increase the font size for each play’s title to make that information more prominent. At the same time we can add some extra spacing below the title, and we can indent the description list a bit.
+
+```language-css
+.timeline li > cite {
+    font-size: 1.5em;
+    line-height: 1em;
+    padding-bottom: 0.5em;
+}
+.timeline dl {
+    padding-left: 1.5em;
+}
+```
+
+For a last bit of polish let’s add a bullet right on the vertical line to mark each plan and tie the title more closely to the dates. We use a large bullet (roughly 5 times the normal size) and position it right over the line. As you can see from the rules below, the unicode character for a bullet can be represented as `"\00B7"`.
+
+```language-css
+.timeline li > time:first-of-type:after {
+	content: "\00B7";
+	font-size: 5.2em;
+	position: absolute;
+	right: -0.35em;
+	top: -0.05em;
+}
+```
+
+Now our time line is starting to look like an actual time _line._ In your own pages you could include additional styles to define fonts, colors, and so on, but even without those decorations the visualization is effective.
 
 <style>
 .timeline2 li {
@@ -399,20 +482,20 @@ Now we can add a little flair to the visualization.
 }
 .timeline2 {
     padding-left: 5em;
-    padding-top: 1em;
+    padding-top: 1.5em;
 }
-.timeline2 cite {
+.timeline2 li > cite {
     display: block;
     font-size: 1.5em;
     line-height: 1em;
     padding-bottom: 0.5em;
-    position: relative;
 }
-.timeline2 cite:before {
-    content: "";
-    position: absolute:
-    display: block;
-    top: -2em;
+.timeline2 li > time:first-of-type:after {
+	content: "\00B7";
+	position: absolute;
+	right: -0.35em;
+	top: -0.05em;
+	font-size: 5.2em;
 }
 .timeline2 dl {
     padding-left: 1.5em;
@@ -439,6 +522,8 @@ Now we can add a little flair to the visualization.
         </dl>
     </li>
 </ol>
+
+#### Step 8: Add Interactivity
 
 
 <script>
