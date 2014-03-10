@@ -164,7 +164,7 @@ var descTerms = [
 ];
 ```
 
-With that array we can quickly add the descriptions to our content.
+With that array we can quickly add the descriptions to our content. We iterate over the array using `.forEach()`. At each iteration we make sure that the data has content (`play[term.key]` is not empty) before creating the description item. A description item contains the term(s) being described in one `<dt>` tag and the description itself in a `<dd>` tag.
 
 ```language-javascript
 plays.forEach(function(play) {
@@ -332,13 +332,16 @@ To finish up the punctuation, let’s add a colon and space after the last of th
 With these changes we’ve cleaned up all of the obvious problems with our time line.
 
 <style>
-ol.timeline1 li {
+.timeline1 {
+    padding-top: 1em;
+}
+.timeline1 li {
     list-style-type: none;
 }
-ol.timeline1 li > time + time:before {
+.timeline1 li > time + time:before {
     content: "-";
 }
-ol.timeline1 li > time:last-of-type:after {
+.timeline1 li > time:last-of-type:after {
     content: ": ";
 }
 </style>
@@ -365,6 +368,78 @@ ol.timeline1 li > time:last-of-type:after {
 </ol>
 
 Now we can add a little flair to the visualization.
+
+
+<style>
+.timeline2 li {
+    list-style-type: none;
+}
+.timeline2 li > time + time:before {
+    content: "-";
+}
+.timeline2 li {
+    border-left: 2px solid #444444;
+}
+.timeline2 dl,
+.timeline2 li {
+    margin: 0;
+}
+.timeline2 li {
+    position: relative;
+    padding-left: 1em;
+    padding-bottom: 1em;
+}
+.timeline2 li > time {
+    position: absolute;
+    left: -3.5em;
+}
+.timeline2 li > time + time {
+    top: 1em;
+    left: -3.85em;
+}
+.timeline2 {
+    padding-left: 5em;
+    padding-top: 1em;
+}
+.timeline2 cite {
+    display: block;
+    font-size: 1.5em;
+    line-height: 1em;
+    padding-bottom: 0.5em;
+    position: relative;
+}
+.timeline2 cite:before {
+    content: "";
+    position: absolute:
+    display: block;
+    top: -2em;
+}
+.timeline2 dl {
+    padding-left: 1.5em;
+}
+</style>
+
+<ol class="timeline2">
+    <li>
+        <time>1589</time><time>1591</time><cite>The Two Gentlemen of Verona</cite>
+        <dl>
+            <dt>First official record</dt><dd>Francis Meres'…</dd>
+            <dt>First published</dt><dd>First Folio (1623)</dd>
+            <dt>First recorded performance</dt><dd>adaptation by…</dd>
+            <dt>Evidence</dt><dd>The play contains…</dd>
+        </dl>
+    </li>
+    <li>
+        <time>1590</time><time>1594</time><cite>The Taming of the Shrew</cite>
+        <dl>
+            <dt>First official record</dt><dd>possible version…</dd>
+            <dt>First published</dt><dd>possible version…</dd>
+            <dt>First recorded performance</dt><dd>According to Philip…</dd>
+            <dt>Evidence</dt><dd>Kier Elam posits…</dd>
+        </dl>
+    </li>
+</ol>
+
 
 <script>
 contentLoaded.done(function() {
