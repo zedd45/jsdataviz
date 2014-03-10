@@ -6,17 +6,9 @@ Fortunately, particularly in the case of time lines, a completely different appr
 
 That’s exactly what we’ll do in this example. We’ll start with the same data set as before. Instead of feeding that data into a third-party library, however, we’ll use plain old JavaScript (with an optional dose of jQuery) to construct a pure HTML representation of the data. Then we’ll use CSS to set the appearance of the time line.
 
-#### Step 1: Include the Required Libraries
+#### Step 1: Prepare the HTML Skeleton
 
-The Chronoline.js library itself depends on a few other libraries, and we’ll need to include all of them in our pages.
-
-* [jQuery](http://jquery.com)
-* [qTip2](http://qtip2.com) (including its style sheet)
-* [Raphaël](http://raphaeljs.com)
-
-All of these libraries are popular enough for public content distribution networks to support, so we’ll use CloudFlare’s CDN in the markup below. We’ll have to use our own resources, however, to host the Chronoline.js itself. That library also defines its own style sheet.
-
-> Note: Chapter 2 includes a more extensive discussion of content distributions networks and the trade-offs involved in using them.
+Without any required libraries, the HTML page for our timeline is pretty simple. All we need is a containing `<div>` with a unique `id` attribute.
 
 ```language-markup
 <!DOCTYPE html>
@@ -24,194 +16,360 @@ All of these libraries are popular enough for public content distribution networ
   <head>
     <meta charset="utf-8">
     <title></title>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.css">
-    <link rel="stylesheet" type="text/css" href="css/chronoline.css">
   </head>
   <body>
     <div id="timeline"></div>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
-   <script src="js/chronoline.js"></script>
   </body>
 </html>
 ```
 
-As you can see, we’ve set aside a `<div>` to hold our time line. We’ve also included the Javascript libraries as the last part of the `<body>` element, as that provides the best browser performance.
+#### Step 2: Start JavaScript Execution
 
-#### Step 2: Prepare the Data
-
-The data for our time line comes from [Wikipedia](http://en.wikipedia.org/wiki/Chronology_of_Shakespeare%27s_plays). As a JavaScript object, we might structure that data like the following excerpt:
+As soon as the browser has finished loading our page, we can start processing the data. As before, we’ll start with our data formatted as a JavaScript array. You can see the complete data set in the book’s [source code](https://github.com/sathomas/jsdataviz).
 
 ```language-javascript
-[
-  {
-    "play": "The Two Gentlemen of Verona", 
-    "date": "1589-1591",
-    "record": "Francis Meres' ...",
-    "published": "First Folio (1623)",   
-    "performance": "adaptation by Benjamin Victor...",
-    "evidence": "The play contains..." 
-  }, { 
-    "play": "The Taming of the Shrew",     
-    "date": "1590-1594", 
-    "record": "possible version ...", 
-    "published": "possible version ...", 
-    "performance": "According to Philip Henslowe...",  
-    "evidence": "Kier Elam posits ..."
-  }, { 
-    "play": "Henry VI, Part 2",
-    "date": "1590-1591", 
-    "record": "version of the ...",   
-    "published": "version of the ...",   
-    "performance": "although it is known ...",         
-    "evidence": "It is known ..." 
-  },
-```
-
-You can see the complete data set in the book’s [source code](https://github.com/sathomas/jsdataviz).
-
-Before we can use Chronoline.js, we have to convert the raw data into the format the library expects. Since we have jQuery available, we can take advantage of its `.map()` function for the conversion. (For details on `.map()`, see chapter 2.)
-
-```language-javascript
-var events = $.map(plays, function(play) {
-    //...
-});
-```
-
-As you can see from our data set, some of the plays have a single year as their date, while others have a range of years. For each play that we process, the presence of a dash (`-`) tells us which we have. We use that information to set the date range for Chronoline.js. (Recall that the JavaScript `Date()` object numbers months from `0` rather than `1`.)
-
-```language-javascript
-var events = $.map(plays, function(play) {
-    var event = {};
-    event.title = play.play;
-    if (play.date.indexOf("-") !== -1) {
-        var daterange = play.date.split("-");
-        event.dates = [new Date(daterange[0], 0, 1), new Date(daterange[1], 11, 31)]
-    } else {
-        event.dates = [new Date(play.date, 0, 1), new Date(play.date, 11, 31)]
-    }
-    return event;
-});
-```
-
-#### Step 3: Draw the Time Line
-
-To draw the time line, we create a new `Chronoline` object, passing it the HTML container element, our event data, and any options. The HTML container element should be a native element and not a jQuery selection. To convert from a selection to a native element, we can simply reference the `[0]` index of the selection.
-
-```language-javascript
-$(function() {
-    var timeline = new Chronoline($("#timeline")[0], events, {});
+window.onload = function () {
+  var plays = [
+    {
+      "play": "The Two Gentlemen of Verona", 
+      "date": "1589-1591",
+      "record": "Francis Meres'…",
+      "published": "First Folio (1623)",   
+      "performance": "adaptation by Benjamin Victor…",
+      "evidence": "The play contains…" 
+    }, { 
+      "play": "The Taming of the Shrew",     
+      "date": "1590-1594", 
+      "record": "possible version…", 
+      "published": "possible version…", 
+      "performance": "According to Philip Henslowe…",  
+      "evidence": "Kier Elam posits…"
+    }, { 
+      "play": "Henry VI, Part 2",
+      "date": "1590-1591", 
+      "record": "version of the…",   
+      "published": "version of the…",   
+      "performance": "although it is known…",         
+      "evidence": "It is known…" 
+    },
+    //…
 }
 ```
 
-If we try to use the default options of Chronoline.js with our data, however, the result is quite disappointing. (In fact, it's illegible and not worth reproducing at this point.) We can fix that in the next step with some additional options.
+#### Step 3: Create the Time Line in Semantic HTML
 
-#### Step 4: Set Chronoline.js Options for the Data
-
-The Chronoline.js library has default options that are well-suited for its original application, but they don’t work so well for Shakespeare's plays. Fortunately, we can change the options from the default values. As of this writing, Chronoline.js doesn’t have much documentation on its options; to see the full set you would normally have to examine the source code. We’ll cover the most important options below, though.
-
-One of the most obvious problems with Chonoline.js’ defaults is the date shown in the initial view. Chronoline.js defaults that date to the current date. Since our time line ends in 1613, the user would have to scroll backwards for a long time to see anything meaningful. We can change this view by giving Chronoline.js a different start date for the initial view:
+To create the timeline in HTML, we first need to decide how to represent it. If you’re used to working with arbitrary `<div>` and `<span>` elements, you might think that’s the best approach here as well. Instead of jumping right to these generic elements, however, it’s worth considering if there might be an HTML structure that more accurately conveys the content. HTML that more closely reflects the meaning of the underlying content is known as _semantic markup_, and it’s usually preferred over generic `<div>` and `<span>` tags. Semantic markup exposes the meaning of your content to computers such as search engines and screen readers for users with visual impairments, and it can improve your site’s search rank and its accessibility. If we think about a time line in the context of semantic markup, it’s easy to see that the time line is really just a list. In fact, it’s a list with a specific order. We should build our HTML time line, therefore, as an `<ol>` element. While we’re creating the `<ol>` we can also give it a class name for CSS style rules we’ll be adding later.
 
 ```language-javascript
-defaultStartDate: new Date(1589, 0, 1),
+var container = document.getElementById("timeline");
+var list = document.createElement("ol");
+list.className="timeline";
+container.appendChild(list);
 ```
 
-As long as we’re setting the time line to start somewhere close to Shakespeare’s lifetime, there’s no need for Chronoline.js to add a special mark for the current date. Tell it not to bother with a simple option:
+Next we can iterate through the plays, creating an individual list item `<li>` for each one. For now, we’ll just insert the date and title as text.
 
 ```language-javascript
-markToday: false,
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    listItem.textContent = play.date + ": " + play.play;
+    list.appendChild(listItem);
+})
 ```
 
-The next major problem we’ll want to address is the labelling. By default, Chronoline.js tries to label every day on the time line. As our events span 24 years, we don’t need that granularity. Instead, we can tell Chronoline just to label the years. For the same reason we also need to change the tick marks. Instead of every day, we only need tick marks for every month.
+Here’s a truncated version of the resulting list. It may not look like much (yet), but it has the essential data and structure.
 
-To change both of these options, we supply Chronoline.js with a function to call. Chronoline.js passes that function a date object, and the function returns `true` or `false` depending on whether or not the date merits a tick mark or label. For tick marks we return `true` only on the first day of the month. We return `true` for labels only on January 1. (Remember that JavaScript numbers months beginning with `0`.)
+<div id="javascript-1"></div>
+
+If you look at the resulting HTML that underlies that list, it’s pretty simple:
+
+```language-markup
+<ol class="timeline">
+    <li>1589-1591: The Two Gentlemen of Verona</li>
+    <li>1590-1594: The Taming of the Shrew</li>
+    <li>1590-1591: Henry VI, Part 2</li>
+    <li>1591: Henry VI, Part 3</li>
+    <li>1591: Henry VI, Part 1</li>
+</ol>
+```
+
+In the spirit of semantic HTML, we should stop and consider if that markup can be improved. Since it appears first in our list items, let’s consider the date or date range for a play. Although it hasn’t been without controvery, HTML5 has defined support for a `<time>` element to contain dates and times. Using that element as a wrapper will make our dates more semantic. The second part of each list item is the title of the play. As it happens, HTML5’s `<cite>` element is perfect for that content. To quote the [current standard](http://www.whatwg.org/specs/web-apps/current-work/multipage/text-level-semantics.html#the-cite-element):
+
+> The cite element represents the title of a work (e.g. a book, […] **a play,** […] etc). This can be a work that is being quoted or referenced in detail (i.e. a citation), or it can just be a work that is mentioned in passing. [Emphasis added.]
+
+To add those elements to our code, we’ll have to distinguish between dates that are single years and those that are ranges. Looking for a dash `-` in the data will tell us which we have.
 
 ```language-javascript
-hashInterval: function(date) {
-    return date.getDate() === 1;
-},
-labelInterval: function(date) {
-    return date.getMonth() === 0 && date.getDate() === 1;
-},
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        var time = document.createElement("time");
+        time.textContent = dates[0];
+        listItem.appendChild(time);
+        time = document.createElement("time");
+        time.textContent = dates[1];
+        listItem.appendChild(time);
+    } else {
+        var time = document.createElement("time");
+        time.textContent = play.date;
+        listItem.appendChild(time);
+    }
+    var cite = document.createElement("cite");
+    cite.textContent = play.play;
+    listItem.appendChild(cite);
+    list.appendChild(listItem);
+})
 ```
 
-Since we’re only adding labels for each year, we should also change to label format. By default it will try to show a full date. We’ll just have it show the year. The details for the format specification are based on a standard [C++ library](http://www.cplusplus.com/reference/ctime/strftime/).
+Because we’re no longer including the punctuation, the resulting output might look a little worse than before. Don’t worry, though, we’ll fix it soon.
+
+<div id="javascript-2"></div>
+
+What is much improved is the underlying HTML. The markup clearly identifies the type of content it contains, an ordered list of dates and citations.
+
+```language-markup
+<ol class="timeline">
+    <li><time>1589</time><time>1591</time><cite>The Two Gentlemen of Verona</cite></li>
+    <li><time>1590</time><time>1594</time><cite>The Taming of the Shrew</cite></li>
+    <li><time>1590</time><time>1591</time><cite>Henry VI, Part 2</cite></li>
+    <li><time>1591</time><cite>Henry VI, Part 3</cite></li>
+    <li><time>1591</time><cite>Henry VI, Part 1</cite></li>
+</ol>
+```
+
+#### Step 4: Include the Supporting Content
+
+When we created a time line using the Chronoline.js library, we weren’t able to include the supporting content from Wikipedia because the library did not offer that option. In this example, though, we have complete control over the content, so let’s include that information in our time line. For most plays our data includes its first official record, its first publication, its first performance, and a discussion of the evidence. This type of content is perfectly matched to the HTML _description list_ `<dl>` so that’s how we’ll add it to our page. It can follow the `<cite>` of the play’s title.
 
 ```language-javascript
-labelFormat: "%Y",
+plays.forEach(function(play) {
+    //…
+    listItem.appendChild(cite);
+    var descList = document.createElement("dl");
+    // Add terms to the list here
+    listItem.appendChild(descList);
+    list.appendChild(listItem);
+})
 ```
 
-For our last adjustments to the labelling, we remove the “sub-labels” and “sub-sub-labels” that Chronoline.js adds by default. Those labels don’t provide any value in our case.
+We can define a mapping array to help in adding the individual terms to each play. That array maps the property name in our data set to the label we want to use in the content.
 
 ```language-javascript
-subLabel: null,
-subSubLabel: null,
+var descTerms = [
+    { key: "record",      label: "First official record"},
+    { key: "published",   label: "First published"},
+    { key: "performance", label: "First recorded performance"},
+    { key: "evidence",    label: "Evidence"},
+];
 ```
 
-We also want to change the span of time that Chronoline.js defines for the time line. For our data, a span of 5 years seems good.
+With that array we can quickly add the descriptions to our content.
 
 ```language-javascript
-visibleSpan: DAY_IN_MILLISECONDS * 366 * 5,
+plays.forEach(function(play) {
+    //…
+    listItem.appendChild(cite);
+    var descList = document.createElement("dl");
+    descTerms.forEach(function(term) {
+        if (play[term.key]) {
+            var descTerm = document.createElement("dt");
+            descTerm.textContent = term.label;
+            descList.appendChild(descTerm);
+            var descElem = document.createElement("dd");
+            descElem.textContent = play[term.key];
+            descList.appendChild(descElem);
+        }
+    });
+    listItem.appendChild(descList);
+    list.appendChild(listItem);
+})
 ```
 
-Note that the variable `DAY_IN_MILLISECONDS` is defined by Chronoline.js itself. We’re free to use it in this or in any other option setting.
+Our timeline is still lacking a bit of visual apeal, but it has a much richer set of content. In fact, even without any styling at all, it still communicates the essential data quite well.
 
-Now we can address the time line scrolling. Chronoline.js normally advances the time line by a single day with each click. That would result in some rather tedius scrolling for our users. Instead of the default behavior, we’ll have Chronoline.js advance by a full year. As with the labels, we change this behavior by supplying Chronoline.js with a function. That function is passed a date object and it should return a new date object to which Chronoline.js should scroll. In our case we simply add or subtract one from the year value.
+<div id="javascript-3"></div>
+
+Here’s the resulting markup (truncated for brevity):
+
+```language-markup
+<ol class="timeline">
+    <li>
+        <time>1589</time><time>1591</time><cite>The Two Gentlemen of Verona</cite>
+        <dl>
+            <dt>First official record</dt><dd>Francis Meres'…</dd>
+            <dt>First published</dt><dd>First Folio (1623)</dd>
+            <dt>First recorded performance</dt><dd>adaptation by…</dd>
+            <dt>Evidence</dt><dd>The play contains…</dd>
+        </dl>
+    </li>
+    <li>
+        <time>1590</time><time>1594</time><cite>The Taming of the Shrew</cite>
+        <dl>
+            <dt>First official record</dt><dd>possible version…</dd>
+            <dt>First published</dt><dd>possible version…</dd>
+            <dt>First recorded performance</dt><dd>According to Philip…</dd>
+            <dt>Evidence</dt><dd>Kier Elam posits…</dd>
+        </dl>
+    </li>
+</ol>
+```
+
+#### Step 5: Optionally Take Advantage of jQuery
+
+Our code so far has used nothing but plain JavaScript. If you’re using jQuery on your web pages, you can shorten the code a bit by taking advantage of some jQuery features. If your web pages aren’t using jQuery already, the minor enhancements in this step don’t justify adding it, so you can skip ahead to the next step.
+
+Here’s the complete code so far with standard JavaScript:
 
 ```language-javascript
-scrollLeft: function(date) {
-    return new Date(date.getFullYear() - 1, date.getMonth(), date.getDate());
-},
-scrollRight: function(date) {
-    return new Date(date.getFullYear() + 1, date.getMonth(), date.getDate());
-},
+var descTerms = [
+    { key: "record",      label: "First official record"},
+    { key: "published",   label: "First published"},
+    { key: "performance", label: "First recorded performance"},
+    { key: "evidence",    label: "Evidence"},
+];
+container = document.getElementById("javascript-3");
+list = document.createElement("ol");
+list.className = "timeline";
+container.appendChild(list);
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        var time = document.createElement("time");
+        time.textContent = dates[0];
+        listItem.appendChild(time);
+        time = document.createElement("time");
+        time.textContent = dates[1];
+        listItem.appendChild(time);
+    } else {
+        var time = document.createElement("time");
+        time.textContent = play.date;
+        listItem.appendChild(time);
+    }
+    var cite = document.createElement("cite");
+    cite.textContent = play.play;
+    listItem.appendChild(cite);
+    var descList = document.createElement("dl");
+    descTerms.forEach(function(term)  {
+        if (play[term.key]) {
+            var descTerm = document.createElement("dt");
+            descTerm.textContent = term.label;
+            descList.appendChild(descTerm);
+            var descElem = document.createElement("dd");
+            descElem.textContent = play[term.key];
+            descList.appendChild(descElem);
+        }
+    });
+    listItem.appendChild(descList);
+    list.appendChild(listItem);
+})
 ```
 
-The last few adjustments clean up the appearance and behavior of Chronoline.js. Adding a bit of extra space (in our case 3 months) before the start and after the end of the timeline give the data a bit of room.
+Here, for comparison, is a jQuery version:
 
 ```language-javascript
-timelinePadding: DAY_IN_MILLISECONDS * 366 / 4,
+var descTerms = [
+    { key: "record",      label: "First official record"},
+    { key: "published",   label: "First published"},
+    { key: "performance", label: "First recorded performance"},
+    { key: "evidence",    label: "Evidence"},
+];
+$list = $("ol").addClass("timeline");
+$.each(plays, function(idx, play) {
+    var $listItem = $("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        $listItem.append($("time").text(dates[0]))
+                 .append($("time").text(dates[1]));
+    } else {
+        $listItem.append($("time").text(play.date));
+   }
+    $listItem.append($("cite").text(play.play));
+    var $descList = $("dl");
+    $.each(descTerms, function(idx, term)  {
+        if (play[term.key]) {
+            $descList.append($("dt").text(term.label))
+                     .append($("dd").text(play[term.key]));
+        }
+    });
+    $listItem.append($descList);
+    $list.append($listItem);
+})
+$("#timeline").append($list);
 ```
 
-We can also make the scrolling animate smoothly instead of jumping, give users the ability to drag the timeline right or left, and improve the default browser tool tips.
+#### Step 6: Style the Time Line
 
-```language-javascript
-animated: true,
-draggable: true,
-tooltips: true,
-```
+Now that we’ve built our time line’s content in HTML, it’s time to define the styles that determine its appearance. In this example we’ll focus on the functional aspects of styling rather than pure visual elements such as fonts and colors. Those are styles that are undoubtedly specific to your own web site.
 
-For the final tweaks, we can change the appearance of the timeline. To change the color and size of the events, we use options:
-
-```language-javascript
-eventAttrs: {  // attrs for the bars and circles of the events
-    fill: '#ffa44f',
-    stroke: '#ffa44f',
-    "stroke-width": 1
-},
-eventHeight: 10,
-```
-
-To change the color of the scroll buttons, we have to modify the `chronoline.css` stylesheet. The property to change is `background-color`.
+The first step is a simple one. We want to get rid of the numbering (1, 2, 3, ...) that browsers normally add to ordered list items. A single rule banishes them from our time line. By setting the `list-style-type` to `none` we tell the browser not to add any special characters to our list items.
 
 ```language-css
-.chronoline-left:hover,
-.chronoline-right:hover {
-    opacity: 1;
-    filter: alpha(opacity=100);
-    background-color: #97aceb;
+.timeline li {
+    list-style-type: none;
 }
 ```
 
-With those changes, we finally have a timeline of Shakespeare’s plays.
+We can also use CSS rules to add some punctuation to our semantic HTML. First we look for places where two `<time>` elements appear as siblings. The CSS adjacent selector `+` let’s us match the second of those `<time>` tags, and we can then use the `:before` pseudo-selector to add a hyphen before it.
 
-<div id="library-1"></div>
+```language-css
+.timeline li > time + time:before {
+    content: "-";
+}
+```
+
+If you haven’t seen the `>` before in a CSS rule, it’s the direct descendent selector. In this example, it means that the `<time>` element must be an immediate child of the `<li>` element. We’re using this so our rules won’t inadvertantly apply to other `<time>` elements that may be nested deeper within the list item’s content.
+
+To finish up the punctuation, let’s add a colon and space after the last of the `<time>` elements in a list item. We have to use two pseudo-selectors for this rule. The `:last-of-type` selector will target the last `<time>` element in the list item. That’s the first `<time>` if there’s only one and the second `<time>` if both are present. Then we add the `:after` pseudo-selector to add content after that `<time>` element.
+
+```language-css
+.timeline li > time:last-of-type:after {
+    content: ": ";
+}
+```
+
+With these changes we’ve cleaned up all of the obvious problems with our time line.
+
+<style>
+ol.timeline1 li {
+    list-style-type: none;
+}
+ol.timeline1 li > time + time:before {
+    content: "-";
+}
+ol.timeline1 li > time:last-of-type:after {
+    content: ": ";
+}
+</style>
+
+<ol class="timeline1">
+    <li>
+        <time>1589</time><time>1591</time><cite>The Two Gentlemen of Verona</cite>
+        <dl>
+            <dt>First official record</dt><dd>Francis Meres'…</dd>
+            <dt>First published</dt><dd>First Folio (1623)</dd>
+            <dt>First recorded performance</dt><dd>adaptation by…</dd>
+            <dt>Evidence</dt><dd>The play contains…</dd>
+        </dl>
+    </li>
+    <li>
+        <time>1590</time><time>1594</time><cite>The Taming of the Shrew</cite>
+        <dl>
+            <dt>First official record</dt><dd>possible version…</dd>
+            <dt>First published</dt><dd>possible version…</dd>
+            <dt>First recorded performance</dt><dd>According to Philip…</dd>
+            <dt>Evidence</dt><dd>Kier Elam posits…</dd>
+        </dl>
+    </li>
+</ol>
+
+Now we can add a little flair to the visualization.
 
 <script>
 contentLoaded.done(function() {
 
-plays = [
+allplays = [
   { "play": "The Two Gentlemen of Verona",     "date": "1589-1591", "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Gentlemen of Verona\"", "published": "First Folio (1623)", "performance": "adaptation by Benjamin Victor performed at David Garrick's Theatre Royal, Drury Lane in 1762. Earliest known performance of straight Shakespearean text at Royal Opera House in 1784, although because of the reference to the play in Palladis Tamia, we know it was definitely performed in Shakespeare's day.", "evidence": "The play contains passages which seem to borrow from John Lyly's Midas (1589), meaning it could not have been written prior to 1589. Additionally, Stanley Wells argues that the scenes involving more than four characters, \"betray an uncertainty of technique suggestive of inexperience.\" As such, the play is considered to be one of the first Shakespeare composed upon arriving in London (Roger Warren, following E.A.J. Honigmann, suggests he may have written it prior to his arrival) and, as such, he lacked theatrical experience. This places the date of composition as most likely somewhere between 1589 and 1591, by which time it is known he was working on the Henry VI plays" },
   { "play": "The Taming of the Shrew",         "date": "1590-1594", "record": "possible version of play entered into Stationers' Register on 2 May 1594 as \"a booke intituled A plesant Conceyted historie called the Tayminge of a Shrowe'. First record of play as it exists today found in the First Folio (1623)", "published": "possible version of play published in quarto in 1594 as A Pleasant Conceited Historie, called The taming of a Shrew (republished in 1596 and 1607). Play as it exists today first published in the First Folio (1623) as The Taming of the Shrew.", "performance": "According to Philip Henslowe's diary, a play called The Tamynge of A Shrowe was performed at Newington Butts Theatre on 13 June 1594. This could have been either the 1594 A Shrew or the Shakespearean The Shrew, but as the Admiral's Men and the Lord Chamberlain's Men were sharing the theatre at the time, and as such Shakespeare himself would have been there, scholars tend to assume that it was The Shrew. The Shakespearean version was definitely performed at court before King Charles I and Queen Henrietta Maria on 26 November 1633, where it was described as being \"liked'.", "evidence": "Kier Elam posits a date of 1591 as a terminus post quem for the composition of The Shrew, based on Shakespeare's probable use of two sources published that year; Abraham Ortelius's map of Italy in the Theatrum Orbis Terrarum (4th ed.) and John Florio's Second Fruits. However, scholars continue to debate the relationship between the 1594 A Shrew and the 1623 The Shrew. Some theorise that A Shrew is a reported text, meaning The Shrew must have been written prior to 2 May 1594; others, that A Shrew is an early draft, meaning The Shrew must have been completed sometime after 2 May 1594. There are also arguments that A Shrew may have been a source for The Shrew, that they could be two completely unrelated plays based on the same (now lost) source (the \"Ur-Shrew\" theory), or A Shrew could be an adaptation of The Shrew. Critics remain divided on this issue, and as such, dating the play is extremely difficult." },
   { "play": "Henry VI, Part 2",                "date": "1590-1591", "record": "version of the play entered into the Stationers' Register on 12 March 1594 as \"a booke intituled, the firste parte of the Contention of the twoo famous houses of york and Lancaster'.", "published": "version of the play published in quarto in 1594 as The First part of the Contention betwixt the two famous Houses of Yorke and Lancaster, with the death of the good Duke Humphrey: And the banishment and death of the Duke of Suffolke, and the Tragicall end of the proud Cardinal of Winchester, with the notable Rebellion of Jack Cade: and the Duke of Yorke's first claim unto the Crowne (republished in 1600 and 1619). The Folio text appears under the title The second Part of Henry the Sixt, with the death of the Good Duke Humfrey.", "performance": "although it is known that the play was definitely performed in Shakespeare's day, the first recorded performance was not until 23 April 1864 at the Surrey Theatre, directed by James Anderson.", "evidence": "It is known that 3 Henry VI was on stage by June 1592, and it is also known that 3 Henry VI was definitely a sequel to 2 Henry VI, meaning 2 Henry VI must also have been on stage by early 1592. This places the likely date of composition as 1590-1591." },
@@ -220,7 +378,7 @@ plays = [
   { "play": "Titus Andronicus",                "date": "1591-1592", "record": "Philip Henslowe's diary, 24 January 1594. On 6 February 1594, the play was entered into the Stationers' Register as \"a booke intitled a Noble Roman Historye of Tytus Andronicus'.", "published": "version of the play published in quarto in February 1594 as The Most Lamentable Romaine Tragedy of Titus Andronicus (first known printing of a Shakespeare play). The play was republished in quarto in 1600 and 1611. There are only minor differences between the 1594 quarto text and the later 1623 First Folio text (i.e. the 1594 text is not considered a bad quarto or a reported text). The Folio text appears under the title The Lamentable Tragedy of Titus Andronicus.", "performance": "on 24 January 1594 at the Rose Theatre in Southwark, as recorded in Henslowe's diary.", "evidence": "According to the title page of the 1594 quarto, the play had been performed by Pembroke's Men, a company which ceased performing in September 1593. As such, the play must have been composed some time prior to September. Additionally, it is unlikely to have been written later than June 1592, as that was when the London theatres were closed due to an outbreak of plague. The theatres would remain shut for the better part of two years, not fully reopening until March 1594 and Shakespeare concentrated most of his energies during this period on poetry. As such, the play was most likely composed sometime between late-1591 and early 1592. Possibly co-written with George Peele" },
   { "play": "Richard III",                     "date": "1592",      "record": "version of the play entered into the Stationers' Register on 20 October 1597 as \"a booke intituled, The tragedie of kinge Richard the Third wth the death of the duke of Clarence'.", "published": "version of the play published in quarto in December 1597 as The tragedy of King Richard the third. Containing, his treacherous plots against his brother Clarence: the pittiefull murther of his innocent nephewes: his tyrannicall usurpation: with the whole course of his detested life, and most deserved death. The Folio text appears under the title The Tragedy of Richard the Third, with the Landing of Earle Richmond, and the Battell at Bosworth Field.", "performance": "The play was performed extensively in Shakespeare's lifetime; it is mentioned in Palladis Tamia in 1598 (as \"Richard the 3.'), and by the time of the First Folio in 1623, had been published in quarto six times (1597, 1598, 1603, 1605, 1612 and 1622), and referenced by multiple writers of the day. Regarding specific performances however, there is little solid evidence. In 1602, John Manningham mentions seeing Richard Burbage playing the role of Richard III, but he offers no further information. The earliest definite performance was at St James's Palace on 16 or 17 November 1633 by the King's Men.", "evidence": "It is known that Richard III was definitely a sequel to 3 Henry VI, which was on-stage by 23 June 1592, hence Richard III must have been written later than early 1592. Additionally, it has been argued that the play contains evidence suggesting it was originally written for Strange's Men, but then rewritten for Pembroke's Men, a company which formed in mid-1592. Also, with the closure of the theatres due to an outbreak of plague in June 1592, the play was unlikely to have been written any later than that, all of which suggests a date of composition as sometime in early-1592." },
   { "play": "Edward III[b]",                   "date": "1592-1593", "record": "entered into the Stationers' Register on 1 December 1595 as \"a booke intituled Edward the Third and the blacke prince their warres wth kinge Iohn of Fraunce'.", "published": "published in quarto in 1596 as The Raigne Of King Edvvard the third (republished in 1599)", "performance": "although it is known from the 1596 quarto title page that the play was performed in the 1590s, the earliest recorded performance was not until 6 March 1911 at the Little Theatre in London, directed by Gertrude Kingston and William Poel. However, this production presented only the first half of the play (dealing with the King's infatuation with the Countess of Salisbury). Performed under the title, The King and the Countess, it was presented in a single matinée performance with the anonymous sixteenth century liturgical drama, Jacob and Esau. The first known performance of the complete text took place in June 1987, at the Theatr Clwyd, directed by Toby Robertson.", "evidence": "Obviously, the play was written by December 1595. According to the title page of the quarto, it had been performed recently in London, but no company information is provided. This could mean that the company that performed the play had disbanded during the closure of the theatres from June 1592 to March 1594. Furthermore, internal evidence suggests that the play may have been specifically written for Pembroke's Men, who ceased performing in September 1593. This places the date of composition as most likely somewhere between early 1592 and September 1593." },
-  { "play": "The Comedy of Errors",            "date": "1594",      "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Errors\"", "published": "First Folio (1623)", "performance": "probably on Innocents Day, 28 December 1594 at Gray's Inn (one of the four London Inns of Court). The only known evidence for this performance is the Gesta Grayorum, a 1688 text printed for William Canning based on a manuscript apparently handed down from the 1590s, detailing the \"Prince of Purpoole\" festival from December 1594 to February 1595.[c] According to the text, after a disastrous attempt to stage \"some notable performance [...] it was thought good not to offer any thing of Account, saving Dancing and Revelling with Gentlewomen; and after such Sports, a Comedy of Errors (like to Plautus his Menaechmus) was played by the Players. So that Night was begun, and continued to the end, in nothing but Confusion and Errors; whereupon, it was ever afterwards called, The Night of Errors.\" As Comedy of Errors is indeed based on Menaechmus, this is almost universally accepted as a reference to an otherwise unrecorded performance of the play, probably by Shakespeare's own company, the newly formed Lord Chamberlain's Men.", "evidence": "traditionally, the play has been dated quite early (Ros King, for example, dates it 1586-1589), and has often been seen as Shakespeare's first comedy, perhaps his first play. However, stylistic and linguistic analysis (proportion of verse to prose, amount of rhyme, use of colloquialism in verse, and a rare word test) has placed it closer to the composition of Richard II and Romeo and Juliet, both of which were written in 1594 or 1595. More specifically, the limited setting (it is one of only two Shakespeare plays to observe the Classical unities) and the brevity of the play (Shakespeare's shortest at 1777 lines), along with the great abundance of legal terminology, suggests to some critics the probability of it being written especially for the Gray's Inn performance, which would place its composition in the latter half of 1594. If it was written for Gray's Inn, it most likely represents the first play by Shakespeare which was specifically commissioned. In this case, that commission could have come from Henry Wriothesley, Earl of Southampton, a member of the Inns of Court, and Shakespeare's patron." },
+  { "play": "The Comedy of Errors",            "date": "1594",      "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Errors\"", "published": "First Folio (1623)", "performance": "probably on Innocents Day, 28 December 1594 at Gray's Inn (one of the four London Inns of Court). The only known evidence for this performance is the Gesta Grayorum, a 1688 text printed for William Canning based on a manuscript apparently handed down from the 1590s, detailing the \"Prince of Purpoole\" festival from December 1594 to February 1595.[c] According to the text, after a disastrous attempt to stage \"some notable performance […] it was thought good not to offer any thing of Account, saving Dancing and Revelling with Gentlewomen; and after such Sports, a Comedy of Errors (like to Plautus his Menaechmus) was played by the Players. So that Night was begun, and continued to the end, in nothing but Confusion and Errors; whereupon, it was ever afterwards called, The Night of Errors.\" As Comedy of Errors is indeed based on Menaechmus, this is almost universally accepted as a reference to an otherwise unrecorded performance of the play, probably by Shakespeare's own company, the newly formed Lord Chamberlain's Men.", "evidence": "traditionally, the play has been dated quite early (Ros King, for example, dates it 1586-1589), and has often been seen as Shakespeare's first comedy, perhaps his first play. However, stylistic and linguistic analysis (proportion of verse to prose, amount of rhyme, use of colloquialism in verse, and a rare word test) has placed it closer to the composition of Richard II and Romeo and Juliet, both of which were written in 1594 or 1595. More specifically, the limited setting (it is one of only two Shakespeare plays to observe the Classical unities) and the brevity of the play (Shakespeare's shortest at 1777 lines), along with the great abundance of legal terminology, suggests to some critics the probability of it being written especially for the Gray's Inn performance, which would place its composition in the latter half of 1594. If it was written for Gray's Inn, it most likely represents the first play by Shakespeare which was specifically commissioned. In this case, that commission could have come from Henry Wriothesley, Earl of Southampton, a member of the Inns of Court, and Shakespeare's patron." },
   { "play": "Love's Labour's Lost",            "date": "1594-1595", "record": "a version of the play was published in quarto in 1598, although the exact date is unknown as it was never entered into the Stationers' Register. Also in 1598, Robert Tofte mentioned the play in his sonnet sequence Alba. The months minde of a melancholy lover; \"Love's Labour Lost, I once did see, a play/Y'cleped so, so called to my pain.\" The date of publication of Alba is unknown as it also was not entered into the Register. Additionally, the play is mentioned in Meres' Palladis Tamia (registered on 7 September, with a dedication dated 10 October). It is unknown exactly which one of these three constitutes the first official record of the play.", "published": "version of the play published in quarto in 1598 as A Pleasant Conceited Comedie called Loves labors lost (the first known printing of a Shakespearean play to include his name on the title page). The Folio text appears under the title Love's Labour's lost.", "performance": "according to the quarto title page, the play was performed at court for Queen Elizabeth sometime over Christmas 1597, however, no further information is provided. The earliest definite performance took place some time between 8 and 15 January 1605, for Anne of Denmark, at either Henry Wriothesley or Robert Cecil's house.", "evidence": "Obviously, the play was written by Christmas 1597, but narrowing the date further has proved difficult, with most efforts focusing upon stylistic evidence. Traditionally, it was seen as one of Shakespeare's earliest plays (Charles Gildon wrote in 1710; \"since it is one of the worst of Shakespeare's Plays, nay I think I may say the very worst, I cannot but think it is his first.') For much of the eighteenth century, it tended to be dated 1590, until Malone's newly constructed chronology in 1778, which dated it 1594. In his 1930 chronology, E.K. Chambers found the play to be more sophisticated than Malone had allowed for, and dated it 1595. Today most scholars tend to concur with a date of 1594-1595, and the play is often grouped with the \"lyrical plays'; Richard II, Romeo and Juliet and A Midsummer Night's Dream, because of its prolific use of rhyming. These four plays are argued to represent a phase of Shakespeare's career where he was experimenting with rhyming iambic pentameter as an alternative form to standard blank verse; Richard II has more rhymed verse than any other history play (19.1%), Romeo and Juliet more than any other tragedy (16.6%) and Love's Labour's and Midsummer Night more than any other comedy (43.1% and 45.5% respectively). All four tend to be dated to 1594/1595. In support of this, Ants Oras' pause test places the play after Richard III, which is usually dated 1592. Furthermore, Taylor finds possible allusions to the Gray's Inn revels of December 1594 (specifically the Muscovite masque in Act 5, Scene 2), and also finds plausible Geoffrey Bullough's argument that the satire of the King of Navarre (loosely based on Henry of Navarre, who was associated with oath breaking after abjuring Protestantism in 1593) favours a date after December 1594, when Henry survived an assassination attempt." },
   { "play": "Love's Labour's Won",             "date": "1595-1596", "record": "Francis Meres' Palladis Tamia (1598); referred to as \"Love labours wonne\"", "published": "published in quarto some time prior to 1603", "performance": "there are no recorded performances of the play", "evidence": "There are only two known references to this play. One is in Meres' Palladis Tamia, the other is on a list by Christopher Hunt, dated August 1603, which gives a list of published plays sold by an Exeter bookseller. Up until 1953, only Meres' reference was known, until Hunt's two pages of handwriting were discovered in the backing of a copy of Thomas Gataker's Certaine Sermones. The discovery was handed over to T.W. Baldwin, who published his findings in 1957 as Shakespeare's Love's Labour's Won. The title suggests the play was written as a sequel to Love's Labour's Lost, which is partially supported by the unusually open-ended nature of that play, hence Love's Labour's Won's position in the Oxford chronology. However, whether the play ever existed has been debated, with some critics speculating that it is simply another name for one of Shakespeare's known plays, a situation similar to Henry VIII, which was originally performed with the title All is True. As Meres refers to The Two Gentlemen of Verona, The Comedy of Errors and The Merchant of Venice, prior to the discovery of the Hunt reference, a common suggestion was The Taming of the Shrew, but as Hunt mentions this play, it could not be Love's Labour's Won. Although Much Ado About Nothing, All's Well That Ends Well and Troilus and Cressida have also been cited as possibilities, these plays tend to be dated later than 1598 (much later in the case of Troilus, although the argument is that Love's Labour's Won is an early draft), and as there are no other pre-1598 Shakespearean comedies with which to equate it, it seems certain that the play did exist, that it was performed and published, but that it has since been lost." },
   { "play": "Richard II",                      "date": "1595",      "record": "entered into the Stationers' Register on 29 August 1597 as \"the Tragedye of Richard the Second'.", "published": "version of the play published in quarto in 1597 as The Tragedie of King Richard the second (republished in 1598 (twice), 1608 and 1615). The Folio text appears under the title The life and death of King Richard the Second", "performance": "possible performance on 9 December 1595 at Sir Edward Hoby's house. Hoby's wife, the daughter of Baron Hunsdon (chief patron of the Lord Chamberlain's Men), wrote a letter to Sir Robert Cecil inviting him to supper and to see \"K. Richard present him self to your vewe.\" Many scholars see this as a reference to Richard II, especially because of the Hunsdon connection with Shakespeare's company. However, some scholars argue that the reference could be to a painting, not a play, whilst others argue there is no evidence that \"K. Richard\" necessarily refers to Richard II, suggesting it could refer to Richard III or to another play entirely. There is no complete consensus on this issue, although most scholars do tend to favour the Richard II theory. The earliest definite performance was at the Globe Theatre on 7 February 1601, organised by the Earl of Essex in a performance probably intended to inspire his supporters on the eve of his armed rebellion against Queen Elizabeth. According to testimony given by actor Augustine Phillips at Essex' trial for treason, he paid the Lord Chamberlain's Men forty shillings more than the standard rate to stage the play.", "evidence": "Richard II is usually seen as one of the \"lyrical plays', along with Love's Labour's Lost, Romeo and Juliet and A Midsummer Night's Dream; four plays in which Shakespeare used rhymed iambic pentameter more than anywhere else in his career. The four plays also include elaborate punning, rhetorical patterning, a general avoidance of colloquialisms and a high volume of metrical regularity. All four of these plays tend to be dated to 1594-1595. Also important in dating the play is Samuel Daniel's The First Four Books of the Civil Wars, which was entered into the Stationers' Register on 11 October 1594, and published in early 1595. Although some scholars have suggested that Daniel used Shakespeare as a source, which would mean the play was written somewhat earlier than 1594, most agree that Shakespeare used Daniel, especially in some of the later scenes, meaning the play could not have been written earlier than 1595." },
@@ -254,6 +412,83 @@ plays = [
   { "play": "Henry VIII, or All is True",      "date": "1613",      "record": "", "published": "First Folio (1623) as The Famous History of the Life of King Henry the Eight", "performance": "29 June 1613, the night the Globe burnt down.", "evidence": "Probably written in collaboration with John Fletcher" },
   { "play": "The Two Noble Kinsmen",           "date": "1613",      "record": "entered into the Stationer' Register on 8 April 1634", "published": "published in quarto in 1634", "performance": "", "evidence": "Not included in the First Folio; written in collaboration with John Fletcher." }
 ];
+
+plays = allplays.slice(0,5);
+var container = document.getElementById("javascript-1");
+var list = document.createElement("ol");
+container.appendChild(list);
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    listItem.textContent = play.date + ": " + play.play;
+    list.appendChild(listItem);
+});
+
+container = document.getElementById("javascript-2");
+list = document.createElement("ol");
+container.appendChild(list);
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        var time = document.createElement("time");
+        time.textContent = dates[0];
+        listItem.appendChild(time);
+        time = document.createElement("time");
+        time.textContent = dates[1];
+        listItem.appendChild(time);
+    } else {
+        var time = document.createElement("time");
+        time.textContent = play.date;
+        listItem.appendChild(time);
+    }
+    var cite = document.createElement("cite");
+    cite.textContent = play.play;
+    listItem.appendChild(cite);
+    list.appendChild(listItem);
+})
+
+var descTerms = [
+    { key: "record",      label: "First official record"},
+    { key: "published",   label: "First published"},
+    { key: "performance", label: "First recorded performance"},
+    { key: "evidence",    label: "Evidence"},
+];
+plays = allplays.slice(0,2);
+container = document.getElementById("javascript-3");
+list = document.createElement("ol");
+container.appendChild(list);
+plays.forEach(function(play) {
+    var listItem = document.createElement("li");
+    if (play.date.indexOf("-") !== -1) {
+        var dates = play.date.split("-");
+        var time = document.createElement("time");
+        time.textContent = dates[0];
+        listItem.appendChild(time);
+        time = document.createElement("time");
+        time.textContent = dates[1];
+        listItem.appendChild(time);
+    } else {
+        var time = document.createElement("time");
+        time.textContent = play.date;
+        listItem.appendChild(time);
+    }
+    var cite = document.createElement("cite");
+    cite.textContent = play.play;
+    listItem.appendChild(cite);
+    var descList = document.createElement("dl");
+    descTerms.forEach(function(term)  {
+        if (play[term.key]) {
+            var descTerm = document.createElement("dt");
+            descTerm.textContent = term.label;
+            descList.appendChild(descTerm);
+            var descElem = document.createElement("dd");
+            descElem.textContent = play[term.key];
+            descList.appendChild(descElem);
+        }
+    });
+    listItem.appendChild(descList);
+    list.appendChild(listItem);
+})
 
 });
 </script>
