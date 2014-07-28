@@ -7,8 +7,12 @@ gulp.task("lint", function () {
     // we can move this to an external JSON config later, if desired.
     // for a single value / var, I felt the the ROI was too low
     jsFilePattern = [
-        "!./node_modules",
-        "**/*.js"
+        "ch1/**/*.js",
+        "ch2/**/*.js",
+        "ch3/**/*.js",
+        "ch4/**/*.js",
+        "ch5/**/*.js",
+        "ch6/**/*.js"
     ];
     
     gulp.src( jsFilePattern )
