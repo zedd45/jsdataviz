@@ -1,0 +1,18 @@
+{
+  "latedef": true,
+  "curly": true,
+  "forin": true,
+  "eqeqeq": true,
+  "noarg": true,
+  "noempty": true,
+  "nonbsp": true,
+  "nonew": true,
+  "quotmark": true,
+  "undef": true,
+  "unused": true,
+  "browser": true,
+  "jquery": true,
+  "worker": true,
+
+  "devel": true
+}
